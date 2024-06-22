@@ -26,6 +26,7 @@ public class DetectedFileSignatureDatabase implements MalwareSignatureDatabase
 {
 	//TODO replace with SQLite
 	private final HashMap<Long, ArrayList<FileSignature>> fileSizeLookup = new HashMap<>();
+	private int totalCount = 0;
 	
 	@Override
 	public void load()
@@ -38,7 +39,7 @@ public class DetectedFileSignatureDatabase implements MalwareSignatureDatabase
 		loadMDB("daily/daily.mdb");
 		loadHSB("daily/daily.hsb");
 		
-		System.out.println("Loaded " + NumberFormat.getInstance().format(fileSizeLookup.size()) + " malware signatures into memory");
+		System.out.println("Loaded " + NumberFormat.getInstance().format(totalCount) + " malware signatures into memory");
 	}
 	
 	private void loadMDB(String file)
@@ -59,6 +60,7 @@ public class DetectedFileSignatureDatabase implements MalwareSignatureDatabase
 					
 					ArrayList<FileSignature> fileSignatures = fileSizeLookup.get(fileSignature.length);
 					fileSignatures.add(fileSignature);
+					totalCount++;
 				}
 			}
 		}
@@ -91,6 +93,7 @@ public class DetectedFileSignatureDatabase implements MalwareSignatureDatabase
 					
 					ArrayList<FileSignature> fileSignatures = fileSizeLookup.get(fileSignature.length);
 					fileSignatures.add(fileSignature);
+					totalCount++;
 				}
 			}
 		}
