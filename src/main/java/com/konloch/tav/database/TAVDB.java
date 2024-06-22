@@ -1,8 +1,8 @@
 package com.konloch.tav.database;
 
-import com.konloch.dynvarmap.DynVarField;
 import com.konloch.dynvarmap.DynVarMap;
 import com.konloch.dynvarmap.serializer.DynVarSerializer;
+import com.konloch.dynvarmap.vars.DynVarInteger;
 import com.konloch.dynvarmap.vars.DynVarLong;
 
 import java.io.File;
@@ -33,14 +33,24 @@ public class TAVDB
 		return workingDirectory;
 	}
 	
-	public DynVarLong getMainDatabaseAge()
+	public DynVarLong getCAVMainDatabaseAge()
 	{
-		return dynVarMap.getVarLong("database.main.age", 0L);
+		return dynVarMap.getVarLong("clamav.database.main.age", 0L);
 	}
 	
-	public DynVarLong getDailyDatabaseAge()
+	public DynVarLong getCAVDailyDatabaseAge()
 	{
-		return dynVarMap.getVarLong("database.daily.age", 0L);
+		return dynVarMap.getVarLong("clamav.database.daily.age", 0L);
+	}
+	
+	public DynVarLong getVSDatabaseAge()
+	{
+		return dynVarMap.getVarLong("virusshare.database.age", 0L);
+	}
+	
+	public DynVarInteger getVSLastFullDownload()
+	{
+		return dynVarMap.getVarInt("virusshare.database.last.full.download", 0);
 	}
 	
 	public void load()
