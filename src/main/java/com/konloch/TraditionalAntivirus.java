@@ -1,5 +1,6 @@
 package com.konloch;
 
+import com.konloch.tav.database.downloader.MalwareBazaarDownloader;
 import com.konloch.tav.database.malware.MalwareDatabases;
 import com.konloch.tav.database.downloader.ClamAVDownloader;
 import com.konloch.tav.database.downloader.VirusShareDownloader;
@@ -22,6 +23,7 @@ public class TraditionalAntivirus
 	public final MalwareDatabases malwareDB = new MalwareDatabases();
 	public final ClamAVDownloader downloaderCDB = new ClamAVDownloader();
 	public final VirusShareDownloader downloaderVS = new VirusShareDownloader();
+	public final MalwareBazaarDownloader downloadMB = new MalwareBazaarDownloader();
 	
 	public void startup()
 	{
@@ -61,6 +63,15 @@ public class TraditionalAntivirus
 				System.out.println("Preforming initial VirusShare database update (This is over 450 files, please be patient)...");
 				downloaderVS.downloadUpdate();
 				tavDB.getVSDatabaseAge().set(System.currentTimeMillis());
+				tavDB.save();
+			}
+			
+			//every week preform the malware bazaar daily update
+			if(System.currentTimeMillis() - tavDB.getMBDatabaseAge().get() >= 1000 * 60 * 60 * 24 * 7)
+			{
+				System.out.println("Preforming weekly Malware Bazaar database update...");
+				downloadMB.downloadUpdate();
+				tavDB.getMBDatabaseAge().set(System.currentTimeMillis());
 				tavDB.save();
 			}
 			

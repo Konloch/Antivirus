@@ -48,6 +48,11 @@ public class TAVDB
 		return dynVarMap.getVarLong("virusshare.database.age", 0L);
 	}
 	
+	public DynVarLong getMBDatabaseAge()
+	{
+		return dynVarMap.getVarLong("malwarebazaar.database.age", 0L);
+	}
+	
 	public DynVarInteger getVSLastFullDownload()
 	{
 		return dynVarMap.getVarInt("virusshare.database.last.full.download", 0);
