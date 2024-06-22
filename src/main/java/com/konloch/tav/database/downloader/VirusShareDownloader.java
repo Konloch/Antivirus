@@ -15,7 +15,7 @@ public class VirusShareDownloader
 {
 	public void downloadUpdate()
 	{
-		int downloadIndex = TraditionalAntivirus.TAV.db.getVSLastFullDownload().get();
+		int downloadIndex = TraditionalAntivirus.TAV.tavDB.getVSLastFullDownload().get();
 		
 		while(true)
 		{
@@ -28,7 +28,7 @@ public class VirusShareDownloader
 			catch (FileNotFoundException e)
 			{
 				if(downloadIndex > 0)
-					TraditionalAntivirus.TAV.db.getVSLastFullDownload().set(downloadIndex - 1);
+					TraditionalAntivirus.TAV.tavDB.getVSLastFullDownload().set(downloadIndex - 1);
 				break;
 			}
 			catch (Exception e)
@@ -41,7 +41,7 @@ public class VirusShareDownloader
 	
 	private void downloadFile(String url, String fileName) throws IOException
 	{
-		File updateFile = new File(TraditionalAntivirus.TAV.db.getWorkingDirectory(), fileName);
+		File updateFile = new File(TraditionalAntivirus.TAV.tavDB.getWorkingDirectory(), fileName);
 		updateFile.getParentFile().mkdirs(); //make folder dir incase it's not there
 		
 		HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();

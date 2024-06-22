@@ -1,6 +1,6 @@
 package com.konloch;
 
-import com.konloch.tav.database.malware.MalwareDatabase;
+import com.konloch.tav.database.malware.MalwareDatabases;
 import com.konloch.tav.database.downloader.ClamAVDownloader;
 import com.konloch.tav.database.downloader.VirusShareDownloader;
 import com.konloch.tav.database.TAVDB;
@@ -17,57 +17,57 @@ import java.util.ArrayList;
 public class TraditionalAntivirus
 {
 	public static TraditionalAntivirus TAV;
-	public final TAVDB db = new TAVDB();
+	
+	public final TAVDB tavDB = new TAVDB();
+	public final MalwareDatabases malwareDB = new MalwareDatabases();
 	public final ClamAVDownloader downloaderCDB = new ClamAVDownloader();
 	public final VirusShareDownloader downloaderVS = new VirusShareDownloader();
-	public final MalwareDatabase CAVDB = new MalwareDatabase();
 	
 	public void startup()
 	{
 		try
 		{
 			//load the db
-			db.load();
+			tavDB.load();
 			
 			//run initial update
-			if (db.getCAVMainDatabaseAge().get() == 0)
+			if (tavDB.getCAVMainDatabaseAge().get() == 0)
 			{
 				System.out.println("Preforming initial ClamAV database update...");
 				downloaderCDB.downloadFullUpdate();
-				db.getCAVMainDatabaseAge().set(System.currentTimeMillis());
-				db.getCAVDailyDatabaseAge().set(System.currentTimeMillis());
-				db.save();
+				tavDB.getCAVMainDatabaseAge().set(System.currentTimeMillis());
+				tavDB.getCAVDailyDatabaseAge().set(System.currentTimeMillis());
+				tavDB.save();
 			}
 			
 			//every week preform the clamAV daily update
-			if(System.currentTimeMillis() - db.getCAVDailyDatabaseAge().get() >= 1000 * 60 * 60 * 24 * 7)
+			if(System.currentTimeMillis() - tavDB.getCAVDailyDatabaseAge().get() >= 1000 * 60 * 60 * 24 * 7)
 			{
 				//TODO make it every 4 hours
 				// + in order to do this we need to support diffpatches and finish the libfreshclam implementation
 			
 				System.out.println("Preforming ClamAV daily update...");
 				downloaderCDB.downloadDailyUpdate();
-				db.getCAVDailyDatabaseAge().set(System.currentTimeMillis());
-				db.save();
+				tavDB.getCAVDailyDatabaseAge().set(System.currentTimeMillis());
+				tavDB.save();
 			}
 			
-			//every week update the virus share DB
 			//TODO NOTE this is too slow to actually use in production
-			// instead we should gather these and distribute them in the binary
-			// we could automate the process but it would be easier to just have it as a manual thing
-			// optionally, if any updates get released after the last publish date, this could kick in to download those
-			/*if(System.currentTimeMillis() - db.getVSDatabaseAge().get() >= 1000 * 60 * 60 * 24 * 7)
+			// instead we should gather these and distribute them as one massive download
+			// this can include clamAV db and then be diffpatched for each update for minimal downloads
+			
+			if (tavDB.getVSDatabaseAge().get() == 0)
 			{
-				System.out.println("Preforming VirusShare weekly update...");
+				System.out.println("Preforming initial VirusShare database update (This is over 450 files, please be patient)...");
 				downloaderVS.downloadUpdate();
-				db.getVSDatabaseAge().set(System.currentTimeMillis());
-				db.save();
-			}*/
+				tavDB.getVSDatabaseAge().set(System.currentTimeMillis());
+				tavDB.save();
+			}
 			
 			System.out.println("Loading malware signatures into memory...");
 			
 			//load all the Clam Antivirus Databases
-			CAVDB.loadAllDatabases();
+			malwareDB.loadAllDatabases();
 		}
 		catch (Exception e)
 		{
@@ -81,7 +81,7 @@ public class TraditionalAntivirus
 		// then you would pass the file contents as a byte[] instead of a file, so everything is kept in memory.
 		
 		MalwareScanFile msf = new MalwareScanFile(file);
-		return CAVDB.detectAsMalware(msf);
+		return malwareDB.detectAsMalware(msf);
 	}
 	
 	public static void main(String[] args)

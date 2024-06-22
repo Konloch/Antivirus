@@ -34,7 +34,7 @@ public class ClamAVDownloader
 	
 	private void downloadFile(String url, String fileName) throws IOException
 	{
-		File updateFile = new File(TraditionalAntivirus.TAV.db.getWorkingDirectory(), fileName);
+		File updateFile = new File(TraditionalAntivirus.TAV.tavDB.getWorkingDirectory(), fileName);
 		HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 		connection.setRequestProperty("User-Agent", "clamav/1.3.1 (Identifier: " + generateUniqueString() + ")");
 		
@@ -82,8 +82,8 @@ public class ClamAVDownloader
 	
 	private void updateDatabase(String databaseName, String fileName) throws FileNotFoundException
 	{
-		File databaseFolder = new File(TraditionalAntivirus.TAV.db.getWorkingDirectory(), databaseName);
-		File updateFile = new File(TraditionalAntivirus.TAV.db.getWorkingDirectory(), fileName);
+		File databaseFolder = new File(TraditionalAntivirus.TAV.tavDB.getWorkingDirectory(), databaseName);
+		File updateFile = new File(TraditionalAntivirus.TAV.tavDB.getWorkingDirectory(), fileName);
 		
 		if(!databaseFolder.exists())
 			databaseFolder.mkdirs();
