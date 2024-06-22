@@ -1,4 +1,4 @@
-package com.konloch.clamav.downloader;
+package com.konloch.tav.database.downloader;
 
 import com.konloch.TraditionalAntivirus;
 
@@ -25,11 +25,15 @@ public class VirusShareDownloader
 				String databaseName = "VirusShare_" + String.format("%05d", downloadIndex++) + ".md5";
 				downloadFile("https://virusshare.com/hashfiles/" + databaseName, "vshare/" + databaseName);
 			}
+			catch (FileNotFoundException e)
+			{
+				if(downloadIndex > 0)
+					TraditionalAntivirus.TAV.db.getVSLastFullDownload().set(downloadIndex - 1);
+				break;
+			}
 			catch (Exception e)
 			{
 				e.printStackTrace();
-				if(downloadIndex > 0)
-					TraditionalAntivirus.TAV.db.getVSLastFullDownload().set(downloadIndex - 1);
 				break;
 			}
 		}

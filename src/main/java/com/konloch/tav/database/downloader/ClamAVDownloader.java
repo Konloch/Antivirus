@@ -1,4 +1,4 @@
-package com.konloch.clamav.downloader;
+package com.konloch.tav.database.downloader;
 
 import com.konloch.TraditionalAntivirus;
 import com.konloch.tav.utils.HashUtils;
@@ -21,10 +21,9 @@ public class ClamAVDownloader
 	{
 		downloadFile("https://database.clamav.net/main.cvd", "main.cvd");
 		updateDatabase("main", "main.cvd");
-		downloadFile("https://database.clamav.net/daily.cvd", "daily.cvd");
-		updateDatabase("daily", "daily.cvd");
-		downloadFile("https://database.clamav.net/bytecode.cvd", "bytecode.cvd");
-		updateDatabase("bytecode", "bytecode.cvd");
+		//downloadFile("https://database.clamav.net/bytecode.cvd", "bytecode.cvd");
+		//updateDatabase("bytecode", "bytecode.cvd");
+		downloadDailyUpdate();
 	}
 	
 	public void downloadDailyUpdate() throws IOException

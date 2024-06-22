@@ -1,8 +1,8 @@
 package com.konloch;
 
-import com.konloch.clamav.database.ClamAVDB;
-import com.konloch.clamav.downloader.ClamAVDownloader;
-import com.konloch.clamav.downloader.VirusShareDownloader;
+import com.konloch.tav.database.malware.MalwareDatabase;
+import com.konloch.tav.database.downloader.ClamAVDownloader;
+import com.konloch.tav.database.downloader.VirusShareDownloader;
 import com.konloch.tav.database.TAVDB;
 import com.konloch.tav.scanning.DetectedSignatureFile;
 import com.konloch.tav.scanning.MalwareScanFile;
@@ -20,7 +20,7 @@ public class TraditionalAntivirus
 	public final TAVDB db = new TAVDB();
 	public final ClamAVDownloader downloaderCDB = new ClamAVDownloader();
 	public final VirusShareDownloader downloaderVS = new VirusShareDownloader();
-	public final ClamAVDB CAVDB = new ClamAVDB();
+	public final MalwareDatabase CAVDB = new MalwareDatabase();
 	
 	public void startup()
 	{
