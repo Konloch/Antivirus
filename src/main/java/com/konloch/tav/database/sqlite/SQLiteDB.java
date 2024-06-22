@@ -170,15 +170,24 @@ public class SQLiteDB
 		return fileSignatures;
 	}
 	
-	public List<FileSignature> getByFileHash(String fileHash)
+	public List<FileSignature> getByFileHash(String... fileHash)
 	{
 		List<FileSignature> fileSignatures = new ArrayList<>();
 		
-		String query = "SELECT hash, length, identifier FROM signatures WHERE hash = ?";
+		StringBuilder query = new StringBuilder("SELECT hash, length, identifier FROM signatures WHERE  hash IN (");
+		for (int i = 0; i < fileHash.length; i++) {
+			query.append("?");
+			if (i < fileHash.length - 1) {
+				query.append(", ");
+			}
+		}
+		query.append(")");
 		
-		try (PreparedStatement pstmt = connection.prepareStatement(query))
+		try (PreparedStatement pstmt = connection.prepareStatement(query.toString()))
 		{
-			pstmt.setString(1, fileHash);
+			for (int i = 0; i < fileHash.length; i++)
+				pstmt.setString(i + 1, fileHash[i]);
+			
 			try (ResultSet rs = pstmt.executeQuery())
 			{
 				while (rs.next())
