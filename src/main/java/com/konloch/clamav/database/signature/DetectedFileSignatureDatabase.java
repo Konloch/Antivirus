@@ -30,7 +30,20 @@ public class DetectedFileSignatureDatabase implements MalwareSignatureDatabase
 	@Override
 	public void load()
 	{
-		try (BufferedReader reader = new BufferedReader(new FileReader(new File(TraditionalAntivirus.TAV.db.getWorkingDirectory(), "main/main.mdb"))))
+		//load main signatures
+		loadMDB("main/main.mdb");
+		loadHSB("main/main.hsb");
+		
+		//load daily signatures
+		loadMDB("daily/daily.mdb");
+		loadHSB("daily/daily.hsb");
+		
+		System.out.println("Loaded " + NumberFormat.getInstance().format(fileSizeLookup.size()) + " malware signatures into memory");
+	}
+	
+	private void loadMDB(String file)
+	{
+		try (BufferedReader reader = new BufferedReader(new FileReader(new File(TraditionalAntivirus.TAV.db.getWorkingDirectory(), file))))
 		{
 			String line;
 			while ((line = reader.readLine()) != null)
@@ -53,8 +66,11 @@ public class DetectedFileSignatureDatabase implements MalwareSignatureDatabase
 		{
 			e.printStackTrace();
 		}
-		
-		try (BufferedReader reader = new BufferedReader(new FileReader(new File(TraditionalAntivirus.TAV.db.getWorkingDirectory(), "main/main.hsb"))))
+	}
+	
+	private void loadHSB(String file)
+	{
+		try (BufferedReader reader = new BufferedReader(new FileReader(new File(TraditionalAntivirus.TAV.db.getWorkingDirectory(), file))))
 		{
 			String line;
 			while ((line = reader.readLine()) != null)
@@ -82,8 +98,6 @@ public class DetectedFileSignatureDatabase implements MalwareSignatureDatabase
 		{
 			e.printStackTrace();
 		}
-		
-		System.out.println("Loaded " + NumberFormat.getInstance().format(fileSizeLookup.size()) + " malware signatures into memory");
 	}
 	
 	@Override

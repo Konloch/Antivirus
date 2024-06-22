@@ -4,13 +4,19 @@
 ## About
 + A Java implementation of the traditional antivirus. We use ClamAV's[1] Database for signatures.
 
+![Screenshot-1](.github/screen-1.png "Screenshot-1")
+
 ## Features
 + Automatically updates from ClamAV's DB, extracts the files and loads them into memory for on-demand scans.
-+ Full-disk scanning / targeted file scanning. Does nothing but alert you of the detections (If any).
++ Targeted file scanning. Does nothing but alert you of the detections.
 
 ## Scanning Methods
-+ Only file signature matching.
-+ Regex / substring / logical are planned to be added.
++ File signature matching (Using ClamAV DB)
+
+## Todo
++ Implement the false positive db
++ Support variable length submissions `:*:`
++ Regex / substring / logical scanning methods
 
 ## Links
 1) https://github.com/Cisco-Talos/clamav
@@ -19,4 +25,4 @@
 + Java 1.8
 
 ## Notes
-+ This is not a wrapper on ClamAV, instead this is an independent implementation of the ClamAV Database. Our scanning methods are not nearly as advanced or complete. If you are looking for a stable AV I recommend you use that instead.
++ This is not a wrapper on ClamAV, instead this is an independent implementation using the ClamAV Database. Our scanning methods are not nearly as advanced or complete. If you are looking for a stable AV I recommend you use ClamAV instead.
