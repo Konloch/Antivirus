@@ -1,4 +1,5 @@
 /database/
 /target/
 /.idea/
+/tests/
 *.bat

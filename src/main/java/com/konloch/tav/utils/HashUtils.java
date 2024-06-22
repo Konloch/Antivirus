@@ -19,27 +19,23 @@ public class HashUtils
 	{
 		try
 		{
-			//create MessageDigest instance for MD5
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			
-			//add input string bytes to digest
 			md.update(input);
 			
-			//get the hash's bytes
-			byte[] hashBytes = md.digest();
-			
-			//convert hash bytes to hex format
-			StringBuilder sb = new StringBuilder();
-			for (byte b : hashBytes)
-			{
-				sb.append(String.format("%02x", b));
-			}
-			
-			return sb.toString();
+			return bytesToHex(md.digest());
 		}
 		catch (NoSuchAlgorithmException e)
 		{
 			throw new RuntimeException("MD5 algorithm not found", e);
 		}
+	}
+	
+	public static String bytesToHex(byte[] bytes)
+	{
+		StringBuilder sb = new StringBuilder();
+		for (byte b : bytes)
+			sb.append(String.format("%02x", b));
+		return sb.toString();
 	}
 }

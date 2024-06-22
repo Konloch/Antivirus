@@ -1,7 +1,7 @@
 package com.konloch.clamav.database;
 
-import com.konloch.clamav.database.main.DetectedFileSignatureDatabase;
-import com.konloch.tav.database.malware.MalwareScanFile;
+import com.konloch.clamav.database.signature.DetectedFileSignatureDatabase;
+import com.konloch.tav.scanning.MalwareScanFile;
 
 /**
  * @author Konloch
@@ -10,15 +10,15 @@ import com.konloch.tav.database.malware.MalwareScanFile;
 public class ClamAVDB
 {
 	public final DetectedFileSignatureDatabase detectedFileSignatureDatabase = new DetectedFileSignatureDatabase();
-	//TODO add the rest of the databases
+	//TODO add the rest of the databases / implement their scanning methods
 	
 	public void loadAllDatabases()
 	{
 		detectedFileSignatureDatabase.load();
 	}
 	
-	public boolean isDetected(MalwareScanFile file)
+	public String detectAsMalware(MalwareScanFile file)
 	{
-		return detectedFileSignatureDatabase.isDetected(file);
+		return detectedFileSignatureDatabase.detectAsMalware(file);
 	}
 }
