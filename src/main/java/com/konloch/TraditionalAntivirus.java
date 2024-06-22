@@ -1,7 +1,7 @@
 package com.konloch;
 
 import com.konloch.tav.database.downloader.MalwareBazaarDownloader;
-import com.konloch.tav.database.malware.MalwareDatabases;
+import com.konloch.tav.database.malware.MalwareScanners;
 import com.konloch.tav.database.downloader.ClamAVDownloader;
 import com.konloch.tav.database.downloader.VirusShareDownloader;
 import com.konloch.tav.database.sqlite.SQLiteDB;
@@ -21,7 +21,7 @@ public class TraditionalAntivirus
 	
 	public final File workingDirectory = getWorkingDirectory();
 	public final SQLiteDB sqLiteDB = new SQLiteDB();
-	public final MalwareDatabases malwareDB = new MalwareDatabases();
+	public final MalwareScanners malwareDB = new MalwareScanners();
 	public final ClamAVDownloader downloaderCDB = new ClamAVDownloader();
 	public final VirusShareDownloader downloaderVS = new VirusShareDownloader();
 	public final MalwareBazaarDownloader downloadMB = new MalwareBazaarDownloader();
