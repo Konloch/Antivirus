@@ -33,7 +33,7 @@ public class TraditionalAntivirus
 			//every week hours preform the daily update
 			if(System.currentTimeMillis() - db.getDailyDatabaseAge().get() >= 1000 * 60 * 60 * 24 * 7)
 			{
-				//TODO make it every 8 hours
+				//TODO make it every 4 hours
 				// + in order to do this we need to support diffpatches and finish the libfreshclam implementation
 			
 				System.out.println("Preforming daily update...");
