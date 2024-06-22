@@ -61,6 +61,11 @@
 			<artifactId>commons-compress</artifactId>
 			<version>1.26.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>3.46.0.0</version>
+		</dependency>
 	</dependencies>
 
     <build>

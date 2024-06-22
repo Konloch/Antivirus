@@ -1,9 +1,12 @@
 package com.konloch.tav.database.downloader;
 
 import com.konloch.TraditionalAntivirus;
+import com.konloch.tav.scanning.FileSignature;
+import com.konloch.util.FastStringUtils;
 
 import java.io.*;
 import java.net.*;
+import java.sql.SQLException;
 
 /**
  * Downloads & extracts the MD5 hashes from VirusShare.com
@@ -13,9 +16,12 @@ import java.net.*;
  */
 public class VirusShareDownloader
 {
-	public void downloadUpdate()
+	public void downloadUpdate() throws SQLException
 	{
-		int downloadIndex = TraditionalAntivirus.TAV.tavDB.getVSLastFullDownload().get();
+		int downloadIndex = TraditionalAntivirus.TAV.sqLiteDB.getIntegerConfig("virusshare.database.last.full.download");
+		
+		//setup db
+		TraditionalAntivirus.TAV.sqLiteDB.optimizeDatabase();
 		
 		while(true)
 		{
@@ -24,11 +30,15 @@ public class VirusShareDownloader
 			{
 				String databaseName = "VirusShare_" + String.format("%05d", downloadIndex++) + ".md5";
 				downloadFile("https://virusshare.com/hashfiles/" + databaseName, "vshare/" + databaseName);
+				loadVSDB("vshare/" + databaseName);
+				
+				//TODO delete
+				//new File(TraditionalAntivirus.TAV.workingDirectory, "vshare/" + databaseName).delete();
 			}
 			catch (FileNotFoundException e)
 			{
 				if(downloadIndex > 0)
-					TraditionalAntivirus.TAV.tavDB.getVSLastFullDownload().set(downloadIndex - 1);
+					TraditionalAntivirus.TAV.sqLiteDB.upsertIntegerConfig("virusshare.database.last.full.download", (downloadIndex - 1));
 				break;
 			}
 			catch (Exception e)
@@ -37,11 +47,15 @@ public class VirusShareDownloader
 				break;
 			}
 		}
+		
+		//finalize db
+		TraditionalAntivirus.TAV.sqLiteDB.insertAllWaitingSignatures();
+		TraditionalAntivirus.TAV.sqLiteDB.resetDatabaseOptimization();
 	}
 	
 	private void downloadFile(String url, String fileName) throws IOException
 	{
-		File updateFile = new File(TraditionalAntivirus.TAV.tavDB.getWorkingDirectory(), fileName);
+		File updateFile = new File(TraditionalAntivirus.TAV.workingDirectory, fileName);
 		updateFile.getParentFile().mkdirs(); //make folder dir incase it's not there
 		
 		HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
@@ -62,6 +76,28 @@ public class VirusShareDownloader
 		finally
 		{
 			connection.disconnect();
+		}
+	}
+	
+	private void loadVSDB(String file)
+	{
+		System.out.println("Inserting " + file + " into SQLite db...");
+		
+		try (BufferedReader reader = new BufferedReader(new FileReader(new File(TraditionalAntivirus.TAV.workingDirectory, file))))
+		{
+			String line;
+			while ((line = reader.readLine()) != null)
+			{
+				if(line.isEmpty() || line.startsWith("#"))
+					continue;
+				
+				FileSignature fileSignature = new FileSignature(line, 0, "2");
+				fileSignature.insert();
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 	}
 }

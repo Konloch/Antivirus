@@ -4,7 +4,7 @@ import com.konloch.tav.database.downloader.MalwareBazaarDownloader;
 import com.konloch.tav.database.malware.MalwareDatabases;
 import com.konloch.tav.database.downloader.ClamAVDownloader;
 import com.konloch.tav.database.downloader.VirusShareDownloader;
-import com.konloch.tav.database.TAVDB;
+import com.konloch.tav.database.sqlite.SQLiteDB;
 import com.konloch.tav.scanning.DetectedSignatureFile;
 import com.konloch.tav.scanning.MalwareScanFile;
 
@@ -19,7 +19,8 @@ public class TraditionalAntivirus
 {
 	public static TraditionalAntivirus TAV;
 	
-	public final TAVDB tavDB = new TAVDB();
+	public final File workingDirectory = getWorkingDirectory();
+	public final SQLiteDB sqLiteDB = new SQLiteDB();
 	public final MalwareDatabases malwareDB = new MalwareDatabases();
 	public final ClamAVDownloader downloaderCDB = new ClamAVDownloader();
 	public final VirusShareDownloader downloaderVS = new VirusShareDownloader();
@@ -29,56 +30,63 @@ public class TraditionalAntivirus
 	{
 		try
 		{
-			//load the db
-			tavDB.load();
+			//load the sql db
+			sqLiteDB.connect();
+			sqLiteDB.createNewTable();
+			
+			//===================
+			// VIRUS SHARE
+			//===================
+			
+			//TODO NOTE this is too slow to actually use in production
+			// instead we should gather these and distribute them as one massive download
+			// this can include clamAV db and then be diffpatched for each update for minimal downloads
+			
+			if (sqLiteDB.getLongConfig("virusshare.database.age") == 0)
+			{
+				System.out.println("Preforming initial VirusShare database update (This is over 450 files, please be patient)...");
+				downloaderVS.downloadUpdate();
+				sqLiteDB.upsertIntegerConfig("virusshare.database.age", System.currentTimeMillis());
+			}
+			
+			//===================
+			// MALWARE BAZAAR
+			//===================
+			
+			//every week preform the malware bazaar daily update
+			if(System.currentTimeMillis() - sqLiteDB.getLongConfig("malwarebazaar.database.age")>= 1000 * 60 * 60 * 24 * 7)
+			{
+				System.out.println("Preforming weekly Malware Bazaar database update...");
+				downloadMB.downloadUpdate();
+				sqLiteDB.upsertIntegerConfig("malwarebazaar.database.age", System.currentTimeMillis());
+			}
+			
+			//===================
+			// CLAM ANTIVIRUS
+			//===================
 			
 			//run initial update
-			if (tavDB.getCAVMainDatabaseAge().get() == 0)
+			if (sqLiteDB.getLongConfig("clamav.database.main.age") == 0)
 			{
 				System.out.println("Preforming initial ClamAV database update...");
 				downloaderCDB.downloadFullUpdate();
-				tavDB.getCAVMainDatabaseAge().set(System.currentTimeMillis());
-				tavDB.getCAVDailyDatabaseAge().set(System.currentTimeMillis());
-				tavDB.save();
+				sqLiteDB.upsertIntegerConfig("clamav.database.main.age", System.currentTimeMillis());
+				sqLiteDB.upsertIntegerConfig("clamav.database.daily.age", System.currentTimeMillis());
 			}
 			
 			//every week preform the clamAV daily update
-			if(System.currentTimeMillis() - tavDB.getCAVDailyDatabaseAge().get() >= 1000 * 60 * 60 * 24 * 7)
+			if(System.currentTimeMillis() - sqLiteDB.getLongConfig("clamav.database.daily.age")>= 1000 * 60 * 60 * 24 * 7)
 			{
 				//TODO make it every 4 hours
 				// + in order to do this we need to support diffpatches and finish the libfreshclam implementation
 			
 				System.out.println("Preforming ClamAV daily update...");
 				downloaderCDB.downloadDailyUpdate();
-				tavDB.getCAVDailyDatabaseAge().set(System.currentTimeMillis());
-				tavDB.save();
+				sqLiteDB.upsertIntegerConfig("clamav.database.daily.age", System.currentTimeMillis());
 			}
 			
-			//TODO NOTE this is too slow to actually use in production
-			// instead we should gather these and distribute them as one massive download
-			// this can include clamAV db and then be diffpatched for each update for minimal downloads
-			
-			if (tavDB.getVSDatabaseAge().get() == 0)
-			{
-				System.out.println("Preforming initial VirusShare database update (This is over 450 files, please be patient)...");
-				downloaderVS.downloadUpdate();
-				tavDB.getVSDatabaseAge().set(System.currentTimeMillis());
-				tavDB.save();
-			}
-			
-			//every week preform the malware bazaar daily update
-			if(System.currentTimeMillis() - tavDB.getMBDatabaseAge().get() >= 1000 * 60 * 60 * 24 * 7)
-			{
-				System.out.println("Preforming weekly Malware Bazaar database update...");
-				downloadMB.downloadUpdate();
-				tavDB.getMBDatabaseAge().set(System.currentTimeMillis());
-				tavDB.save();
-			}
-			
-			System.out.println("Loading malware signatures into memory...");
-			
-			//load all the Clam Antivirus Databases
-			malwareDB.loadAllDatabases();
+			//print the db stats
+			malwareDB.printDatabaseStatistics();
 		}
 		catch (Exception e)
 		{
@@ -94,6 +102,22 @@ public class TraditionalAntivirus
 		MalwareScanFile msf = new MalwareScanFile(file);
 		return malwareDB.detectAsMalware(msf);
 	}
+	
+	private File getWorkingDirectory()
+	{
+		if(workingDirectory == null)
+		{
+			File workingDirectory = new File(System.getProperty("user.home") + File.separator + "TAV.konloch");
+			
+			if(!workingDirectory.exists())
+				workingDirectory.mkdirs();
+			
+			return workingDirectory;
+		}
+		
+		return workingDirectory;
+	}
+	
 	
 	public static void main(String[] args)
 	{

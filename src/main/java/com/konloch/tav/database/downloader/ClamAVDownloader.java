@@ -1,7 +1,9 @@
 package com.konloch.tav.database.downloader;
 
 import com.konloch.TraditionalAntivirus;
+import com.konloch.tav.scanning.FileSignature;
 import com.konloch.tav.utils.HashUtils;
+import com.konloch.util.FastStringUtils;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
@@ -20,21 +22,51 @@ public class ClamAVDownloader
 	public void downloadFullUpdate() throws IOException
 	{
 		downloadFile("https://database.clamav.net/main.cvd", "main.cvd");
-		updateDatabase("main", "main.cvd");
-		//downloadFile("https://database.clamav.net/bytecode.cvd", "bytecode.cvd");
-		//updateDatabase("bytecode", "bytecode.cvd");
+		extractDatabase(new File(TraditionalAntivirus.TAV.workingDirectory, "main"),
+				new File(TraditionalAntivirus.TAV.workingDirectory, "main.cvd"));
+		
+		//setup db
+		TraditionalAntivirus.TAV.sqLiteDB.optimizeDatabase();
+		
+		loadMDB("main/main.mdb");
+		loadHSB("main/main.hsb");
+		
+		//finalize db
+		TraditionalAntivirus.TAV.sqLiteDB.insertAllWaitingSignatures();
+		TraditionalAntivirus.TAV.sqLiteDB.resetDatabaseOptimization();
+		
+		//TODO delete main/
+		
+		/*downloadFile("https://database.clamav.net/bytecode.cvd", "bytecode.cvd");
+		extractDatabase(new File(TraditionalAntivirus.TAV.workingDirectory, "bytecode"),
+				new File(TraditionalAntivirus.TAV.workingDirectory, "bytecode.cvd"));*/
+		
+		
 		downloadDailyUpdate();
 	}
 	
 	public void downloadDailyUpdate() throws IOException
 	{
 		downloadFile("http://database.clamav.net/daily.cvd", "daily.cvd");
-		updateDatabase("daily", "daily.cvd");
+		extractDatabase(new File(TraditionalAntivirus.TAV.workingDirectory, "daily"),
+				new File(TraditionalAntivirus.TAV.workingDirectory, "daily.cvd"));
+		
+		//setup db
+		TraditionalAntivirus.TAV.sqLiteDB.optimizeDatabase();
+		
+		loadMDB("daily/daily.mdb");
+		loadHSB("daily/daily.hsb");
+		
+		//finalize db
+		TraditionalAntivirus.TAV.sqLiteDB.insertAllWaitingSignatures();
+		TraditionalAntivirus.TAV.sqLiteDB.resetDatabaseOptimization();
+		
+		//TODO delete daily/
 	}
 	
 	private void downloadFile(String url, String fileName) throws IOException
 	{
-		File updateFile = new File(TraditionalAntivirus.TAV.tavDB.getWorkingDirectory(), fileName);
+		File updateFile = new File(TraditionalAntivirus.TAV.workingDirectory, fileName);
 		HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 		connection.setRequestProperty("User-Agent", "clamav/1.3.1 (Identifier: " + generateUniqueString() + ")");
 		
@@ -80,23 +112,6 @@ public class ClamAVDownloader
 		return HashUtils.getMD5Hash(sb.toString());
 	}
 	
-	private void updateDatabase(String databaseName, String fileName) throws FileNotFoundException
-	{
-		File databaseFolder = new File(TraditionalAntivirus.TAV.tavDB.getWorkingDirectory(), databaseName);
-		File updateFile = new File(TraditionalAntivirus.TAV.tavDB.getWorkingDirectory(), fileName);
-		
-		if(!databaseFolder.exists())
-			databaseFolder.mkdirs();
-		
-		if(!updateFile.exists())
-			throw new FileNotFoundException("Database Update File Not Found: " + updateFile.getAbsolutePath());
-		
-		extractDatabase(databaseFolder, updateFile);
-		
-		System.out.println("Deleting " + updateFile.getAbsolutePath());
-		updateFile.delete();
-	}
-	
 	private void extractDatabase(File databaseFolder, File updateFile)
 	{
 		int cavHeaderSize = 0x200; //skip versioning / comments / etc
@@ -136,6 +151,55 @@ public class ClamAVDownloader
 			}
 		}
 		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadMDB(String file)
+	{
+		System.out.println("Inserting " + file + " into SQLite db...");
+		
+		try (BufferedReader reader = new BufferedReader(new FileReader(new File(TraditionalAntivirus.TAV.workingDirectory, file))))
+		{
+			String line;
+			while ((line = reader.readLine()) != null)
+			{
+				String[] signatureInformation = FastStringUtils.split(line, ":", 3);
+				
+				if(signatureInformation.length == 3)
+				{
+					FileSignature fileSignature = new FileSignature(signatureInformation[1], Long.parseLong(signatureInformation[0]), signatureInformation[2]);
+					fileSignature.insert();
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadHSB(String file)
+	{
+		System.out.println("Inserting " + file + " into SQLite db...");
+		
+		try (BufferedReader reader = new BufferedReader(new FileReader(new File(TraditionalAntivirus.TAV.workingDirectory, file))))
+		{
+			String line;
+			while ((line = reader.readLine()) != null)
+			{
+				String[] signatureInformation = FastStringUtils.split(line, ":", 3);
+				
+				if(signatureInformation.length == 3)
+				{
+					String length = signatureInformation[1];
+					FileSignature fileSignature = new FileSignature(signatureInformation[0], length.equals("*") ? 0 : Long.parseLong(length), signatureInformation[2]);
+					fileSignature.insert();
+				}
+			}
+		}
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}

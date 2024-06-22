@@ -1,5 +1,10 @@
 package com.konloch.tav.scanning;
 
+import com.konloch.TraditionalAntivirus;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 /**
  * @author Konloch
  * @since 6/21/2024
@@ -15,6 +20,23 @@ public class FileSignature
 		this.hash = hash;
 		this.length = length;
 		this.malwareType = malwareType;
+	}
+	
+	public void insert()
+	{
+		TraditionalAntivirus.TAV.sqLiteDB.insertSignature(this);
+	}
+	
+	public void update() throws SQLException
+	{
+		String updateSQL = "UPDATE signatures SET length = ?, identifier = ? WHERE hash = ?";
+		try (PreparedStatement pstmt = TraditionalAntivirus.TAV.sqLiteDB.getConnection().prepareStatement(updateSQL))
+		{
+			pstmt.setLong(1, length);
+			pstmt.setString(2, malwareType);
+			pstmt.setString(3, hash);
+			pstmt.executeUpdate();
+		}
 	}
 	
 	public String doesDetectAsMalwareType(MalwareScanFile file)
