@@ -277,6 +277,30 @@ public class SQLiteDB
 		return defaultValue;
 	}
 	
+	public String getStringConfig(String key) throws SQLException
+	{
+		return getStringConfig(key, "");
+	}
+	
+	public String getStringConfig(String key, String defaultValue) throws SQLException
+	{
+		String query = "SELECT value FROM config_text WHERE key = ?";
+		
+		try (PreparedStatement pstmt = connection.prepareStatement(query))
+		{
+			pstmt.setString(1, key);
+			try (ResultSet rs = pstmt.executeQuery())
+			{
+				if (rs.next())
+					return rs.getString("value");
+			}
+		}
+		
+		upsertStringConfig(key, defaultValue);
+		
+		return defaultValue;
+	}
+	
 	public void upsertIntegerConfig(String key, int value) throws SQLException
 	{
 		String query = "INSERT OR REPLACE INTO config_integer (key, value) VALUES (?, ?)";
@@ -297,6 +321,18 @@ public class SQLiteDB
 		{
 			pstmt.setString(1, key);
 			pstmt.setLong(2, value);
+			pstmt.executeUpdate();
+		}
+	}
+	
+	public void upsertStringConfig(String key, String value) throws SQLException
+	{
+		String query = "INSERT OR REPLACE INTO config_text (key, value) VALUES (?, ?)";
+		
+		try (PreparedStatement pstmt = connection.prepareStatement(query))
+		{
+			pstmt.setString(1, key);
+			pstmt.setString(2, value);
 			pstmt.executeUpdate();
 		}
 	}

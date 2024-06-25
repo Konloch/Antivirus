@@ -57,7 +57,7 @@ public class YaraHubDownloader
 			updateFile.mkdirs();
 		
 		if(!databaseZip.exists())
-			throw new FileNotFoundException("Database Update File Not Found: " + updateFile.getAbsolutePath());
+			throw new FileNotFoundException("Yara Hub Update File Not Found: " + updateFile.getAbsolutePath());
 		
 		extractDatabase(databaseZip, updateFile);
 		
