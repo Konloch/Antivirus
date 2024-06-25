@@ -3,6 +3,9 @@ package com.konloch.av.downloader.impl;
 import com.konloch.Antivirus;
 import com.konloch.av.downloader.DownloadState;
 import com.konloch.av.downloader.Downloader;
+import com.konloch.av.scanning.yara.YaraScanner;
+import com.konloch.disklib.DiskReader;
+import com.konloch.disklib.DiskWriter;
 import com.konloch.httprequest.HTTPRequest;
 import com.konloch.util.FastStringUtils;
 
@@ -174,6 +177,53 @@ public class YaraDownloader implements Downloader
 		catch (IOException e)
 		{
 			e.printStackTrace();
+		}
+	}
+	
+	public static void loadYaraFilesIntoSingleFile() throws IOException
+	{
+		File yaraLocalRules = new File(Antivirus.AV.workingDirectory, "yara");
+		File yaraLocalFile = new File(Antivirus.AV.workingDirectory, "yara-rules.yar");
+		
+		DiskWriter.write(yaraLocalFile);
+		
+		File[] files = yaraLocalRules.listFiles();
+		int totalLength = 0;
+		if(files != null)
+		{
+			for (File f : files)
+			{
+				if(!f.isFile())
+					continue;
+				
+				boolean[] writeRule = new boolean[]{true};
+				DiskReader.read(f).forEach(line ->
+				{
+					if(line.trim().startsWith("rule "))
+					{
+						String rule = FastStringUtils.split(line, "rule ")[1].trim();
+						
+						if(rule.contains(" "))
+							rule = FastStringUtils.split(rule, " ")[0].trim();
+						
+						if(rule.endsWith("{"))
+							rule = rule.substring(rule.length()-1);
+						
+						rule = rule.trim();
+						
+						//System.out.println("FOUND HERE: " + rule);
+						if(YaraScanner.rulesWithErrors.contains(rule))
+						{
+							writeRule[0] = false;
+						}
+					}
+				});
+				
+				if(!writeRule[0])
+					continue;
+				
+				DiskWriter.append(yaraLocalFile, DiskReader.readString(f) + "\n\n");
+			}
 		}
 	}
 }

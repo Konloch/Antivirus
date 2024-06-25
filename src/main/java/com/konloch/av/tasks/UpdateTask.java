@@ -37,9 +37,6 @@ public class UpdateTask implements Runnable
 				}
 			}
 			
-			//print the db stats
-			Antivirus.AV.sqLiteDB.printDatabaseStatistics();
-			
 			//wait for an hour
 			try
 			{

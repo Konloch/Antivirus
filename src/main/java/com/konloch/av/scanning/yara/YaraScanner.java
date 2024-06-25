@@ -2,7 +2,9 @@ package com.konloch.av.scanning.yara;
 
 import com.konloch.Antivirus;
 import com.konloch.av.database.malware.MalwareScanFile;
+import com.konloch.av.downloader.impl.YaraDownloader;
 import com.konloch.av.scanning.MalwareScanner;
+import com.konloch.util.FastStringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ import java.util.List;
  */
 public class YaraScanner implements MalwareScanner
 {
-	private static HashSet<String> rulesWithErrors = new HashSet<>();
+	public static final HashSet<String> rulesWithErrors = new HashSet<>();
 	
 	@Override
 	public String detectAsMalware(MalwareScanFile file)
@@ -36,32 +38,17 @@ public class YaraScanner implements MalwareScanner
 		
 		//TODO ideally we would compile the yara files and reuse them each scan
 		File yaraLocalFile = new File(Antivirus.AV.workingDirectory, "yara" + arch + ".exe");
-		File yaraLocalRules = new File(Antivirus.AV.workingDirectory, "yara");
+		File yaraRuleFile = new File(Antivirus.AV.workingDirectory, "yara-rules.yar");
 		
 		if(!yaraLocalFile.exists())
 			throw new RuntimeException("File not found: " + yaraLocalFile.getAbsolutePath());
-		
-		ArrayList<String> yaraRules = new ArrayList<>();
-		File[] files = yaraLocalRules.listFiles();
-		if(files != null)
-		{
-			for (File f : files)
-			{
-				String path = f.getAbsolutePath();
-				
-				if(rulesWithErrors.contains(path))
-					continue;
-				
-				yaraRules.add(path);
-			}
-		}
 		
 		try
 		{
 			//setup commands
 			List<String> command = new ArrayList<>();
 			command.add(yaraLocalFile.getAbsolutePath());
-			command.addAll(yaraRules);
+			command.add(yaraRuleFile.getAbsolutePath());
 			command.add(file.getFile().getAbsolutePath());
 			
 			//create process builder
@@ -94,16 +81,16 @@ public class YaraScanner implements MalwareScanner
 					
 					if(errorMessage.contains("in "))
 					{
-						int startIndex = errorMessage.indexOf("in ");
-						int closeParenIndex = errorMessage.indexOf(")", startIndex);
-						int openParenIndex = errorMessage.lastIndexOf("(", closeParenIndex);
-						String pathUrl = errorMessage.substring(startIndex + 3, openParenIndex);
-						//String lineNumber = errorMessage.substring(openParenIndex + 1, closeParenIndex);
+						String[] param = FastStringUtils.split(errorMessage, "\"");
+						String rule = param[1];
 						
-						//System.out.println("Skipping rule: " + pathUrl);
+						System.out.println("Skipping rule: " + rule + ", reason: " + errorMessage);
 						
 						//add rule to known "skip" rules list
-						rulesWithErrors.add(pathUrl);
+						rulesWithErrors.add(rule);
+						
+						//rebuild the yara mega-rules
+						YaraDownloader.loadYaraFilesIntoSingleFile();
 						
 						//retry...
 						return detectAsMalware(file);

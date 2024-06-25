@@ -8,6 +8,7 @@ import com.konloch.av.database.malware.MalwareScanFile;
 import com.konloch.av.tasks.UpdateTask;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -20,7 +21,7 @@ public class Antivirus
 	
 	public final File workingDirectory = getWorkingDirectory();
 	public final SQLiteDB sqLiteDB = new SQLiteDB();
-	public final MalwareScanners malwareDB = new MalwareScanners();
+	public final MalwareScanners scanners = new MalwareScanners();
 	public final AVFlags flags = new AVFlags();
 	
 	public void startup()
@@ -48,7 +49,7 @@ public class Antivirus
 		// then you would pass the file contents as a byte[] instead of a file, so everything is kept in memory.
 		
 		MalwareScanFile msf = new MalwareScanFile(file);
-		return malwareDB.detectAsMalware(msf);
+		return scanners.detectAsMalware(msf);
 	}
 	
 	private File getWorkingDirectory()
@@ -66,7 +67,7 @@ public class Antivirus
 		return workingDirectory;
 	}
 	
-	public static void main(String[] args) throws InterruptedException
+	public static void main(String[] args) throws InterruptedException, IOException
 	{
 		if(args.length == 0)
 		{
@@ -82,6 +83,12 @@ public class Antivirus
 			Thread.sleep(1);
 		}
 		
+		//print the db stats
+		Antivirus.AV.sqLiteDB.printDatabaseStatistics();
+		
+		//write mega yara file
+		YaraDownloader.loadYaraFilesIntoSingleFile();
+		
 		System.out.println("Preforming malware scan...");
 		
 		String malwareType;
@@ -95,7 +102,7 @@ public class Antivirus
 			
 			if((malwareType = AV.detectAsMalware(searchFile)) != null)
 			{
-				System.out.println("Detection found: " + searchFile.getAbsolutePath() + " is identified as: " + malwareType);
+				System.out.println(malwareType);
 				detectedFiles.add(new DetectedSignatureFile(searchFile, malwareType));
 			}
 		}
