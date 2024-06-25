@@ -1,6 +1,8 @@
 # Yara-Antivirus
 Built on top of [Traditional-Antivirus](https://github.com/Konloch/Traditional-Antivirus), YAV supports file signature scanning and Yara[1] scanning.
 
+![Screenshot-1](.github/screen-1.png "Screenshot-1")
+
 ## Features
 + Scans using Yara & File signatures.
 + Automatically updates from ClamAV's DB[2], Malware Bazaar[3], VirusShare[4] & Yaraify[5].
