@@ -1,6 +1,6 @@
 package com.konloch.tav.database.downloader;
 
-import com.konloch.TraditionalAntivirus;
+import com.konloch.YaraAntivirus;
 import com.konloch.tav.scanning.FileSignature;
 import com.konloch.tav.utils.HashUtils;
 import com.konloch.util.FastStringUtils;
@@ -22,25 +22,21 @@ public class ClamAVDownloader
 	public void downloadFullUpdate() throws IOException
 	{
 		downloadFile("https://database.clamav.net/main.cvd", "main.cvd");
-		extractDatabase(new File(TraditionalAntivirus.TAV.workingDirectory, "main"),
-				new File(TraditionalAntivirus.TAV.workingDirectory, "main.cvd"));
+		extractDatabase(new File(YaraAntivirus.AV.workingDirectory, "main"),
+				new File(YaraAntivirus.AV.workingDirectory, "main.cvd"));
 		
 		//setup db
-		TraditionalAntivirus.TAV.sqLiteDB.optimizeDatabase();
+		YaraAntivirus.AV.sqLiteDB.optimizeDatabase();
 		
 		loadMDB("main/main.mdb");
 		loadHSB("main/main.hsb");
 		
 		//finalize db
-		TraditionalAntivirus.TAV.sqLiteDB.insertAllWaitingSignatures();
-		TraditionalAntivirus.TAV.sqLiteDB.resetDatabaseOptimization();
+		YaraAntivirus.AV.sqLiteDB.insertAllWaitingSignatures();
+		YaraAntivirus.AV.sqLiteDB.resetDatabaseOptimization();
 		
-		//TODO delete main/
-		
-		/*downloadFile("https://database.clamav.net/bytecode.cvd", "bytecode.cvd");
-		extractDatabase(new File(TraditionalAntivirus.TAV.workingDirectory, "bytecode"),
-				new File(TraditionalAntivirus.TAV.workingDirectory, "bytecode.cvd"));*/
-		
+		//delete the main folder
+		new File(YaraAntivirus.AV.workingDirectory, "main").delete();
 		
 		downloadDailyUpdate();
 	}
@@ -48,25 +44,26 @@ public class ClamAVDownloader
 	public void downloadDailyUpdate() throws IOException
 	{
 		downloadFile("http://database.clamav.net/daily.cvd", "daily.cvd");
-		extractDatabase(new File(TraditionalAntivirus.TAV.workingDirectory, "daily"),
-				new File(TraditionalAntivirus.TAV.workingDirectory, "daily.cvd"));
+		extractDatabase(new File(YaraAntivirus.AV.workingDirectory, "daily"),
+				new File(YaraAntivirus.AV.workingDirectory, "daily.cvd"));
 		
 		//setup db
-		TraditionalAntivirus.TAV.sqLiteDB.optimizeDatabase();
+		YaraAntivirus.AV.sqLiteDB.optimizeDatabase();
 		
 		loadMDB("daily/daily.mdb");
 		loadHSB("daily/daily.hsb");
 		
 		//finalize db
-		TraditionalAntivirus.TAV.sqLiteDB.insertAllWaitingSignatures();
-		TraditionalAntivirus.TAV.sqLiteDB.resetDatabaseOptimization();
+		YaraAntivirus.AV.sqLiteDB.insertAllWaitingSignatures();
+		YaraAntivirus.AV.sqLiteDB.resetDatabaseOptimization();
 		
-		//TODO delete daily/
+		//delete the daily folder
+		new File(YaraAntivirus.AV.workingDirectory, "daily").delete();
 	}
 	
 	private void downloadFile(String url, String fileName) throws IOException
 	{
-		File updateFile = new File(TraditionalAntivirus.TAV.workingDirectory, fileName);
+		File updateFile = new File(YaraAntivirus.AV.workingDirectory, fileName);
 		HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 		connection.setRequestProperty("User-Agent", "clamav/1.3.1 (Identifier: " + generateUniqueString() + ")");
 		
@@ -133,6 +130,10 @@ public class ClamAVDownloader
 				{
 					File outputFile = new File(databaseFolder, entry.getName());
 					
+					//zipslip
+					if(!outputFile.getAbsolutePath().startsWith(databaseFolder.getAbsolutePath()))
+						continue;
+					
 					//ensure parent exists before writing
 					outputFile.getParentFile().mkdirs();
 					
@@ -160,7 +161,7 @@ public class ClamAVDownloader
 	{
 		System.out.println("Inserting " + file + " into SQLite db...");
 		
-		try (BufferedReader reader = new BufferedReader(new FileReader(new File(TraditionalAntivirus.TAV.workingDirectory, file))))
+		try (BufferedReader reader = new BufferedReader(new FileReader(new File(YaraAntivirus.AV.workingDirectory, file))))
 		{
 			String line;
 			while ((line = reader.readLine()) != null)
@@ -184,7 +185,7 @@ public class ClamAVDownloader
 	{
 		System.out.println("Inserting " + file + " into SQLite db...");
 		
-		try (BufferedReader reader = new BufferedReader(new FileReader(new File(TraditionalAntivirus.TAV.workingDirectory, file))))
+		try (BufferedReader reader = new BufferedReader(new FileReader(new File(YaraAntivirus.AV.workingDirectory, file))))
 		{
 			String line;
 			while ((line = reader.readLine()) != null)

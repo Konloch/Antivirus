@@ -1,8 +1,7 @@
 package com.konloch.tav.database.downloader;
 
-import com.konloch.TraditionalAntivirus;
+import com.konloch.YaraAntivirus;
 import com.konloch.tav.scanning.FileSignature;
-import com.konloch.util.FastStringUtils;
 
 import java.io.*;
 import java.net.*;
@@ -18,10 +17,10 @@ public class VirusShareDownloader
 {
 	public void downloadUpdate() throws SQLException
 	{
-		int downloadIndex = TraditionalAntivirus.TAV.sqLiteDB.getIntegerConfig("virusshare.database.last.full.download");
+		int downloadIndex = YaraAntivirus.AV.sqLiteDB.getIntegerConfig("virusshare.database.last.full.download");
 		
 		//setup db
-		TraditionalAntivirus.TAV.sqLiteDB.optimizeDatabase();
+		YaraAntivirus.AV.sqLiteDB.optimizeDatabase();
 		
 		while(true)
 		{
@@ -38,7 +37,7 @@ public class VirusShareDownloader
 			catch (FileNotFoundException e)
 			{
 				if(downloadIndex > 0)
-					TraditionalAntivirus.TAV.sqLiteDB.upsertIntegerConfig("virusshare.database.last.full.download", (downloadIndex - 1));
+					YaraAntivirus.AV.sqLiteDB.upsertIntegerConfig("virusshare.database.last.full.download", (downloadIndex - 1));
 				break;
 			}
 			catch (Exception e)
@@ -49,13 +48,13 @@ public class VirusShareDownloader
 		}
 		
 		//finalize db
-		TraditionalAntivirus.TAV.sqLiteDB.insertAllWaitingSignatures();
-		TraditionalAntivirus.TAV.sqLiteDB.resetDatabaseOptimization();
+		YaraAntivirus.AV.sqLiteDB.insertAllWaitingSignatures();
+		YaraAntivirus.AV.sqLiteDB.resetDatabaseOptimization();
 	}
 	
 	private void downloadFile(String url, String fileName) throws IOException
 	{
-		File updateFile = new File(TraditionalAntivirus.TAV.workingDirectory, fileName);
+		File updateFile = new File(YaraAntivirus.AV.workingDirectory, fileName);
 		updateFile.getParentFile().mkdirs(); //make folder dir incase it's not there
 		
 		HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
@@ -83,7 +82,7 @@ public class VirusShareDownloader
 	{
 		System.out.println("Inserting " + file + " into SQLite db...");
 		
-		try (BufferedReader reader = new BufferedReader(new FileReader(new File(TraditionalAntivirus.TAV.workingDirectory, file))))
+		try (BufferedReader reader = new BufferedReader(new FileReader(new File(YaraAntivirus.AV.workingDirectory, file))))
 		{
 			String line;
 			while ((line = reader.readLine()) != null)

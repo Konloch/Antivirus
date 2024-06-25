@@ -1,30 +1,21 @@
-# Traditional-Antivirus
-+ Work in progress
-
-## About
-+ A Java implementation of the traditional antivirus.
-
-![Screenshot-1](.github/screen-1.png "Screenshot-1")
+# Yara-Antivirus
+Built on top of [Traditional-Antivirus](https://github.com/Konloch/Traditional-Antivirus), YAV supports file signature scanning and Yara[1] scanning.
 
 ## Features
-+ Automatically updates from ClamAV's DB[1], Malware Bazaar[2] & VirusShare[3].
-+ Targeted file scanning. Does nothing but alert you of the detections.
-
-## Scanning Methods
-+ File signature matching
-
-## Todo
-+ Implement the false positive db
-+ Scanning in archives
-+ Regex / substring / logical scanning methods
++ Scans using Yara & File signatures.
++ Automatically updates from ClamAV's DB[2], Malware Bazaar[3], VirusShare[4] & Yaraify[5].
 
 ## Links
-1) https://github.com/Cisco-Talos/clamav
-2) https://bazaar.abuse.ch/
-3) https://virusshare.com/
+1) https://github.com/VirusTotal/yara
+2) https://github.com/Cisco-Talos/clamav
+3) https://bazaar.abuse.ch/
+4) https://virusshare.com/
+5) https://yaraify.abuse.ch/
 
 ## Requires
 + Java 1.8
++ Windows 10 (Earlier versions probably work)
 
 ## Notes
-+ This is not a wrapper on ClamAV, instead this is an independent implementation using the ClamAV Database. Our scanning methods are not nearly as advanced or complete. If you are looking for a stable AV I recommend you use ClamAV instead.
++ This is simply a CLI wrapper on Yara
++ File Signature Scanning comes from [Traditional-Antivirus](https://github.com/Konloch/Traditional-Antivirus)

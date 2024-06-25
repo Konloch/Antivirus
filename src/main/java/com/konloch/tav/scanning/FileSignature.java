@@ -1,6 +1,6 @@
 package com.konloch.tav.scanning;
 
-import com.konloch.TraditionalAntivirus;
+import com.konloch.YaraAntivirus;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -24,13 +24,13 @@ public class FileSignature
 	
 	public void insert()
 	{
-		TraditionalAntivirus.TAV.sqLiteDB.insertSignature(this);
+		YaraAntivirus.AV.sqLiteDB.insertSignature(this);
 	}
 	
 	public void update() throws SQLException
 	{
 		String updateSQL = "UPDATE signatures SET length = ?, identifier = ? WHERE hash = ?";
-		try (PreparedStatement pstmt = TraditionalAntivirus.TAV.sqLiteDB.getConnection().prepareStatement(updateSQL))
+		try (PreparedStatement pstmt = YaraAntivirus.AV.sqLiteDB.getConnection().prepareStatement(updateSQL))
 		{
 			pstmt.setLong(1, length);
 			pstmt.setString(2, malwareType);

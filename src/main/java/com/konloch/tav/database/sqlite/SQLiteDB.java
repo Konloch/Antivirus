@@ -1,10 +1,11 @@
 package com.konloch.tav.database.sqlite;
 
-import com.konloch.TraditionalAntivirus;
+import com.konloch.YaraAntivirus;
 import com.konloch.tav.scanning.FileSignature;
 
 import java.io.File;
 import java.sql.*;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class SQLiteDB
 	
 	public void connect() throws SQLException
 	{
-		connection = DriverManager.getConnection("jdbc:sqlite:" + new File(TraditionalAntivirus.TAV.workingDirectory, "db.sqlite").getAbsolutePath());
+		connection = DriverManager.getConnection("jdbc:sqlite:" + new File(YaraAntivirus.AV.workingDirectory, "db.sqlite").getAbsolutePath());
 	}
 	
 	public void optimizeDatabase()
@@ -298,6 +299,13 @@ public class SQLiteDB
 			pstmt.setLong(2, value);
 			pstmt.executeUpdate();
 		}
+	}
+	
+	public void printDatabaseStatistics()
+	{
+		File[] yaraRules = new File(YaraAntivirus.AV.workingDirectory, "yara").listFiles();
+		int yaraRulesCount = yaraRules == null ? 0 : yaraRules.length;
+		System.out.println("Counted " + NumberFormat.getInstance().format(YaraAntivirus.AV.sqLiteDB.countFileSignatures()) + " malware signatures & " + NumberFormat.getInstance().format(yaraRulesCount) + " yara rules.");
 	}
 	
 	public void close()

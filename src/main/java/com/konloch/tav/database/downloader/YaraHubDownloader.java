@@ -1,7 +1,6 @@
 package com.konloch.tav.database.downloader;
 
 import com.konloch.YaraAntivirus;
-import com.konloch.tav.scanning.FileSignature;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -10,18 +9,17 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * Downloads & extracts the MD5 hashes from VirusShare.com
+ * Downloads & extracts Yara Rules from Yara Hub
  *
  * @author Konloch
  * @since 6/21/2024
  */
-public class MalwareBazaarDownloader
+public class YaraHubDownloader
 {
 	public void downloadUpdate() throws IOException
 	{
-		downloadFile("https://bazaar.abuse.ch/export/txt/md5/full/", "mbazaar/full.md5.zip");
-		updateDatabase("mbazaar/full.md5.zip", "mbazaar/full.md5");
-		loadMBDB("mbazaar/full.md5");
+		downloadFile("https://yaraify.abuse.ch/yarahub/yaraify-rules.zip", "yara/yarahub.zip");
+		extract("yara/yarahub.zip", "yara/");
 	}
 	
 	private void downloadFile(String url, String fileName) throws IOException
@@ -50,13 +48,13 @@ public class MalwareBazaarDownloader
 		}
 	}
 	
-	private void updateDatabase(String databaseZipPath, String fileName) throws FileNotFoundException
+	private void extract(String databaseZipPath, String fileName) throws FileNotFoundException
 	{
 		File databaseZip = new File(YaraAntivirus.AV.workingDirectory, databaseZipPath);
 		File updateFile = new File(YaraAntivirus.AV.workingDirectory, fileName);
 		
-		if(!databaseZip.exists())
-			databaseZip.mkdirs();
+		if(!updateFile.exists())
+			updateFile.mkdirs();
 		
 		if(!databaseZip.exists())
 			throw new FileNotFoundException("Database Update File Not Found: " + updateFile.getAbsolutePath());
@@ -67,52 +65,38 @@ public class MalwareBazaarDownloader
 		databaseZip.delete();
 	}
 	
-	public static void extractDatabase(File zipFile, File outputFile)
+	public static void extractDatabase(File zipFile, File outputFolder)
 	{
 		try (FileInputStream fis = new FileInputStream(zipFile);
 		     ZipInputStream zis = new ZipInputStream(fis))
 		{
-			ZipEntry entry = zis.getNextEntry();
-			if (entry != null) //extract the first entry
+			ZipEntry entry;
+			while ((entry = zis.getNextEntry()) != null)
 			{
-				outputFile.getParentFile().mkdirs(); //make folder dir incase it's not there
+				File outputFile = new File(outputFolder, entry.getName());
 				
-				try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile)))
+				//zipslip
+				if(!outputFile.getAbsolutePath().startsWith(outputFolder.getAbsolutePath()))
+					continue;
+				
+				if (entry.isDirectory())
+					outputFile.mkdirs();
+				else
 				{
-					byte[] buffer = new byte[1024];
-					int len;
-					while ((len = zis.read(buffer)) > 0)
+					outputFile.getParentFile().mkdirs();
+					try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile)))
 					{
-						bos.write(buffer, 0, len);
+						byte[] buffer = new byte[1024];
+						int len;
+						while ((len = zis.read(buffer)) > 0)
+						{
+							bos.write(buffer, 0, len);
+						}
 					}
 				}
 			}
-			
-			zis.closeEntry();
 		}
 		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	private void loadMBDB(String file)
-	{
-		System.out.println("Inserting " + file + " into SQLite db...");
-		
-		try (BufferedReader reader = new BufferedReader(new FileReader(new File(YaraAntivirus.AV.workingDirectory, file))))
-		{
-			String line;
-			while ((line = reader.readLine()) != null)
-			{
-				if(line.isEmpty() || line.startsWith("#"))
-					continue;
-				
-				FileSignature fileSignature = new FileSignature(line, 0, "3");
-				fileSignature.insert();
-			}
-		}
-		catch (Exception e)
 		{
 			e.printStackTrace();
 		}

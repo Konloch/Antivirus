@@ -2,12 +2,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.konloch</groupId>
-    <artifactId>Traditional-Antivirus</artifactId>
+    <artifactId>Yara-Antivirus</artifactId>
     <version>0.0.1</version>
 
-    <name>Traditional-Antivirus</name>
-    <description>A traditional antivirus.</description>
-    <url>https://konloch.com/Traditional-Antivirus/</url>
+    <name>Yara-Antivirus</name>
+    <description>A Yara Antivirus.</description>
+    <url>https://konloch.com/Yara-Antivirus/</url>
     <inceptionYear>2024</inceptionYear>
 
 	<licenses>
@@ -33,9 +33,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/Konloch/Traditional-Antivirus.git</connection>
-        <developerConnection>scm:git:ssh://github.com:Konloch/Traditional-Antivirus.git</developerConnection>
-        <url>http://github.com/Konloch/Traditional-Antivirus/tree/master</url>
+        <connection>scm:git:git://github.com/Konloch/Yara-Antivirus.git</connection>
+        <developerConnection>scm:git:ssh://github.com:Konloch/Yara-Antivirus.git</developerConnection>
+        <url>http://github.com/Konloch/Yara-Antivirus/tree/master</url>
     </scm>
 
     <properties>
@@ -128,7 +128,7 @@
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <manifestEntries>
-	                            <Main-Class>com.konloch.TraditionalAntiVirus</Main-Class>
+	                            <Main-Class>com.konloch.YaraAntivirus</Main-Class>
                                 <Implementation-Version>${project.version}</Implementation-Version>
                                 <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
                                 <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>

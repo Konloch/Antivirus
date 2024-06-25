@@ -1,35 +1,47 @@
 package com.konloch;
 
+import com.konloch.disklib.DiskWriter;
 import com.konloch.tav.database.downloader.MalwareBazaarDownloader;
+import com.konloch.tav.database.downloader.YaraHubDownloader;
 import com.konloch.tav.database.malware.MalwareScanners;
 import com.konloch.tav.database.downloader.ClamAVDownloader;
 import com.konloch.tav.database.downloader.VirusShareDownloader;
 import com.konloch.tav.database.sqlite.SQLiteDB;
 import com.konloch.tav.scanning.DetectedSignatureFile;
 import com.konloch.tav.scanning.MalwareScanFile;
+import com.konloch.tav.utils.ResourceUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import static com.konloch.tav.utils.HashUtils.doesFileMatchBytes;
 
 /**
  * @author Konloch
  * @since 6/21/2024
  */
-public class TraditionalAntivirus
+public class YaraAntivirus
 {
-	public static TraditionalAntivirus TAV;
+	public static YaraAntivirus AV;
 	
 	public final File workingDirectory = getWorkingDirectory();
 	public final SQLiteDB sqLiteDB = new SQLiteDB();
 	public final MalwareScanners malwareDB = new MalwareScanners();
 	public final ClamAVDownloader downloaderCDB = new ClamAVDownloader();
 	public final VirusShareDownloader downloaderVS = new VirusShareDownloader();
+	public final YaraHubDownloader yaraHubDownloader = new YaraHubDownloader();
 	public final MalwareBazaarDownloader downloadMB = new MalwareBazaarDownloader();
 	
 	public void startup()
 	{
 		try
 		{
+			System.out.println("Starting up...");
+			
+			//drop latest yara binaries
+			dropLatestYara();
+			
 			//load the sql db
 			sqLiteDB.connect();
 			sqLiteDB.createNewTable();
@@ -85,8 +97,20 @@ public class TraditionalAntivirus
 				sqLiteDB.upsertIntegerConfig("clamav.database.daily.age", System.currentTimeMillis());
 			}
 			
+			//===================
+			// YARA HUB
+			//===================
+			
+			//every 4 hours download the yarahub daily update
+			if(System.currentTimeMillis() - sqLiteDB.getLongConfig("yarahub.database.age")>= 1000 * 60 * 60 * 4)
+			{
+				System.out.println("Preforming Yara Hub daily update...");
+				yaraHubDownloader.downloadUpdate();
+				sqLiteDB.upsertIntegerConfig("yarahub.database.age", System.currentTimeMillis());
+			}
+			
 			//print the db stats
-			malwareDB.printDatabaseStatistics();
+			sqLiteDB.printDatabaseStatistics();
 		}
 		catch (Exception e)
 		{
@@ -94,10 +118,40 @@ public class TraditionalAntivirus
 		}
 	}
 	
+	private void dropLatestYara() throws IOException
+	{
+		boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
+		String architecture = System.getProperty("os.arch");
+		String arch;
+		
+		if(!isWindows)
+			throw new RuntimeException("This is currently windows only - YaraX might be a solution, open a ticket and let us know you need it.");
+		
+		if (architecture.equals("x86") || architecture.equals("i386") || architecture.equals("i686"))
+			arch = "32";
+		else if (architecture.equals("amd64") || architecture.equals("x86_64"))
+			arch = "64";
+		else
+			throw new RuntimeException("Only 32bit & 64bit are supported, cannot support: " + architecture);
+		
+		byte[] yaraBinary = ResourceUtils.readBytesFromFile("/win/yara" + arch + ".exe");
+		byte[] yaraCBinary = ResourceUtils.readBytesFromFile("/win/yarac" + arch + ".exe");
+		File yaraLocalFile = new File(YaraAntivirus.AV.workingDirectory, "yara.exe");
+		File yaraCLocalFile = new File(YaraAntivirus.AV.workingDirectory, "yarac.exe");
+		
+		if(!yaraLocalFile.exists() || !doesFileMatchBytes(yaraLocalFile, yaraBinary))
+			DiskWriter.write(yaraLocalFile, yaraBinary);
+		
+		if(!yaraCLocalFile.exists() || !doesFileMatchBytes(yaraCLocalFile, yaraCBinary))
+			DiskWriter.write(yaraCLocalFile, yaraCBinary);
+	}
+	
 	public String detectAsMalware(File file)
 	{
 		//TODO archive support would go here, it would attempt to unzip, ungzip, tar archive etc as deep as it can go
 		// then you would pass the file contents as a byte[] instead of a file, so everything is kept in memory.
+		
+		
 		
 		MalwareScanFile msf = new MalwareScanFile(file);
 		return malwareDB.detectAsMalware(msf);
@@ -107,7 +161,7 @@ public class TraditionalAntivirus
 	{
 		if(workingDirectory == null)
 		{
-			File workingDirectory = new File(System.getProperty("user.home") + File.separator + "TAV.konloch");
+			File workingDirectory = new File(System.getProperty("user.home") + File.separator + "Yara-Antivirus");
 			
 			if(!workingDirectory.exists())
 				workingDirectory.mkdirs();
@@ -127,8 +181,8 @@ public class TraditionalAntivirus
 			return;
 		}
 		
-		TAV = new TraditionalAntivirus();
-		TAV.startup();
+		AV = new YaraAntivirus();
+		AV.startup();
 		
 		System.out.println("Preforming malware scan...");
 		
@@ -141,7 +195,7 @@ public class TraditionalAntivirus
 			if(!searchFile.exists())
 				continue;
 			
-			if((malwareType = TAV.detectAsMalware(searchFile)) != null)
+			if((malwareType = AV.detectAsMalware(searchFile)) != null)
 			{
 				System.out.println("Detection found: " + searchFile.getAbsolutePath() + " is identified as: " + malwareType);
 				detectedFiles.add(new DetectedSignatureFile(searchFile, malwareType));
