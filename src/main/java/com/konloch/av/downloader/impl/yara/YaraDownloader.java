@@ -246,7 +246,7 @@ public class YaraDownloader implements Downloader
 		
 		yaraRules++;
 		
-		sb.append("include \"").append(file.getAbsolutePath()).append("\"\n\n");
+		sb.append("include \"").append(file.getAbsolutePath()).append("\"\n");
 		
 		if(sb.length() >= 15000)
 		{
