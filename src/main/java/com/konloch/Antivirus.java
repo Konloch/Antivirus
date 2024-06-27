@@ -102,6 +102,8 @@ public class Antivirus
 			if(!searchFile.exists())
 				continue;
 			
+			System.out.println("Scanning: " + searchFile.getAbsolutePath());
+			
 			if((malwareType = AV.detectAsMalware(searchFile)) != null)
 			{
 				System.out.println(malwareType);

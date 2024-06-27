@@ -239,10 +239,7 @@ public class YaraDownloader implements Downloader
 		});
 		
 		if(!writeRule[0])
-		{
-			System.out.println("Skipping rule: " + file.getAbsolutePath());
 			return;
-		}
 		
 		yaraRules++;
 		
