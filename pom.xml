@@ -2,12 +2,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.konloch</groupId>
-    <artifactId>Yara-Antivirus</artifactId>
+    <artifactId>Antivirus</artifactId>
     <version>0.0.1</version>
 
-    <name>Yara-Antivirus</name>
-    <description>A Yara Antivirus.</description>
-    <url>https://konloch.com/Yara-Antivirus/</url>
+    <name>Antivirus</name>
+    <description>An Antivirus.</description>
+    <url>https://konloch.com/Antivirus/</url>
     <inceptionYear>2024</inceptionYear>
 
 	<licenses>
@@ -33,9 +33,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/Konloch/Yara-Antivirus.git</connection>
-        <developerConnection>scm:git:ssh://github.com:Konloch/Yara-Antivirus.git</developerConnection>
-        <url>http://github.com/Konloch/Yara-Antivirus/tree/master</url>
+        <connection>scm:git:git://github.com/Konloch/Antivirus.git</connection>
+        <developerConnection>scm:git:ssh://github.com:Konloch/Antivirus.git</developerConnection>
+        <url>http://github.com/Konloch/Antivirus/tree/master</url>
     </scm>
 
     <properties>
