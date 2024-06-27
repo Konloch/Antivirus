@@ -10,6 +10,9 @@ import com.konloch.av.downloader.impl.yara.rules.Neo23x0Downloader;
 import com.konloch.av.downloader.impl.yara.rules.ReversingLabsDownloader;
 import com.konloch.av.downloader.impl.yara.rules.YaraHubDownloader;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * @author Konloch
  * @since 6/25/2024
@@ -19,8 +22,10 @@ public class AVConstants
 	public static boolean ENABLE_SIGNATURE_SCANNING_DATABASES_IMPORT = false;
 	public static boolean ENABLE_SIGNATURE_SCANNING = false;
 	
-	public static final Downloader[] DOWNLOADERS = new Downloader[]
-	{
+	public static final String SIGNATURE_IDENTIFIER_VIRUSSHARE_SUBMISSION = "2";
+	public static final String SIGNATURE_IDENTIFIER_MALWAREBAZAAR_SUBMISSION = "3";
+	
+	public static final ArrayList<Downloader> DOWNLOADERS = new ArrayList<>(Arrays.asList(
 			new VirusShareDownloader(),
 			new MalwareBazaarDownloader(),
 			new ClamAVDownloader(),
@@ -28,6 +33,6 @@ public class AVConstants
 			new YaraHubDownloader(),
 			new ReversingLabsDownloader(),
 			new Neo23x0Downloader(),
-			new YaraDownloader(),
-	};
+			new YaraDownloader()
+	));
 }

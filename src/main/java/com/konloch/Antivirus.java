@@ -43,41 +43,8 @@ public class Antivirus
 		}
 	}
 	
-	public String detectAsMalware(File file)
+	public void run(String[] args) throws IOException, InterruptedException
 	{
-		//TODO archive support would go here, it would attempt to unzip, ungzip, tar archive etc as deep as it can go
-		// then you would pass the file contents as a byte[] instead of a file, so everything is kept in memory.
-		
-		MalwareScanFile msf = new MalwareScanFile(file);
-		return scanners.detectAsMalware(msf);
-	}
-	
-	private File getWorkingDirectory()
-	{
-		if(workingDirectory == null)
-		{
-			File workingDirectory = new File(System.getProperty("user.home") + File.separator + "Antivirus");
-			
-			if(!workingDirectory.exists())
-				workingDirectory.mkdirs();
-			
-			return workingDirectory;
-		}
-		
-		return workingDirectory;
-	}
-	
-	public static void main(String[] args) throws InterruptedException, IOException
-	{
-		if(args.length == 0)
-		{
-			System.out.println("Incorrect launch arguments, try passing a file or directory.");
-			return;
-		}
-		
-		AV = new Antivirus();
-		AV.startup();
-		
 		while(!AV.flags.updateFinished)
 		{
 			Thread.sleep(1);
@@ -113,5 +80,42 @@ public class Antivirus
 		
 		long finished = System.currentTimeMillis()-start;
 		System.out.println("Malware scan completed, found " + detectedFiles.size() + " types of malware, took: " + finished + " ms");
+	}
+	
+	public String detectAsMalware(File file)
+	{
+		//TODO archive support would go here, it would attempt to unzip, ungzip, tar archive etc as deep as it can go
+		// then you would pass the file contents as a byte[] instead of a file, so everything is kept in memory.
+		
+		MalwareScanFile msf = new MalwareScanFile(file);
+		return scanners.detectAsMalware(msf);
+	}
+	
+	private File getWorkingDirectory()
+	{
+		if(workingDirectory == null)
+		{
+			File workingDirectory = new File(System.getProperty("user.home") + File.separator + "Antivirus");
+			
+			if(!workingDirectory.exists())
+				workingDirectory.mkdirs();
+			
+			return workingDirectory;
+		}
+		
+		return workingDirectory;
+	}
+	
+	public static void main(String[] args) throws InterruptedException, IOException
+	{
+		if(args.length == 0)
+		{
+			System.out.println("Incorrect launch arguments, try passing a file or directory.");
+			return;
+		}
+		
+		AV = new Antivirus();
+		AV.startup();
+		AV.run(args);
 	}
 }

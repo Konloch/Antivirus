@@ -10,6 +10,8 @@ import java.io.*;
 import java.net.*;
 import java.sql.SQLException;
 
+import static com.konloch.AVConstants.SIGNATURE_IDENTIFIER_VIRUSSHARE_SUBMISSION;
+
 /**
  * Downloads & extracts the MD5 hashes from VirusShare.com
  *
@@ -118,7 +120,7 @@ public class VirusShareDownloader implements Downloader
 				if(line.isEmpty() || line.startsWith("#"))
 					continue;
 				
-				FileSignature fileSignature = new FileSignature(line, 0, "2");
+				FileSignature fileSignature = new FileSignature(line, 0, SIGNATURE_IDENTIFIER_VIRUSSHARE_SUBMISSION);
 				fileSignature.insert();
 			}
 		}
