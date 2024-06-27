@@ -223,26 +223,26 @@ public class YaraDownloader implements Downloader
 		{
 			if(line.trim().startsWith("rule "))
 			{
-				String rule = FastStringUtils.split(line, "rule ")[1].trim();
+				String rule = FastStringUtils.split(line, "rule ")[0].trim();
 				
 				if(rule.contains(" "))
 					rule = FastStringUtils.split(rule, " ")[0].trim();
 				
 				if(rule.endsWith("{"))
-					rule = rule.substring(rule.length()-1);
+					rule = rule.substring(0, rule.length()-1);
 				
 				rule = rule.trim();
 				
-				//System.out.println("FOUND HERE: " + rule);
 				if(YaraScanner.rulesWithErrors.contains(rule))
-				{
 					writeRule[0] = false;
-				}
 			}
 		});
 		
 		if(!writeRule[0])
+		{
+			System.out.println("Skipping rule: " + file.getAbsolutePath());
 			return;
+		}
 		
 		yaraRules++;
 		

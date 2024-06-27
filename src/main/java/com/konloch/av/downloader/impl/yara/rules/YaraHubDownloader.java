@@ -39,11 +39,11 @@ public class YaraHubDownloader implements Downloader
 	private void downloadUpdate() throws IOException, SQLException
 	{
 		downloadFile("https://yaraify.abuse.ch/yarahub/yaraify-rules.zip", "yara/yarahub.zip");
-		extract("yara/yarahub.zip", "yara/YaraHub");
+		extract("yara/yarahub.zip", "yara/YaraHub", "yara", "yar");
 		Antivirus.AV.sqLiteDB.upsertIntegerConfig("yarahub.database.age", System.currentTimeMillis());
 	}
 	
-	private void downloadFile(String url, String fileName) throws IOException
+	public void downloadFile(String url, String fileName) throws IOException
 	{
 		File updateFile = new File(Antivirus.AV.workingDirectory, fileName);
 		updateFile.getParentFile().mkdirs(); //make folder dir incase it's not there
@@ -69,7 +69,7 @@ public class YaraHubDownloader implements Downloader
 		}
 	}
 	
-	private void extract(String databaseZipPath, String fileName) throws FileNotFoundException
+	public void extract(String databaseZipPath, String fileName, String... expectedFileExtensions) throws FileNotFoundException
 	{
 		File databaseZip = new File(Antivirus.AV.workingDirectory, databaseZipPath);
 		File extractFolder = new File(Antivirus.AV.workingDirectory, fileName);
@@ -78,18 +78,17 @@ public class YaraHubDownloader implements Downloader
 			extractFolder.mkdirs();
 		
 		if(!databaseZip.exists())
-			throw new FileNotFoundException("Yara Hub Update File Not Found: " + extractFolder.getAbsolutePath());
+			throw new FileNotFoundException("Update File Not Found: " + extractFolder.getAbsolutePath());
 		
-		extractDatabase(databaseZip, extractFolder);
+		extractDatabase(databaseZip, extractFolder, expectedFileExtensions);
 		
 		System.out.println("Deleting " + databaseZip.getAbsolutePath());
 		databaseZip.delete();
 	}
 	
-	public static void extractDatabase(File zipFile, File outputFolder)
+	public static void extractDatabase(File zipFile, File outputFolder, String... expectedFileExtensions)
 	{
-		try (FileInputStream fis = new FileInputStream(zipFile);
-		     ZipInputStream zis = new ZipInputStream(fis))
+		try (FileInputStream fis = new FileInputStream(zipFile); ZipInputStream zis = new ZipInputStream(fis))
 		{
 			ZipEntry entry;
 			while ((entry = zis.getNextEntry()) != null)
@@ -97,14 +96,22 @@ public class YaraHubDownloader implements Downloader
 				File outputFile = new File(outputFolder, entry.getName());
 				
 				//zipslip
-				if(!outputFile.getAbsolutePath().startsWith(outputFolder.getAbsolutePath()))
+				if (!outputFile.getAbsolutePath().startsWith(outputFolder.getAbsolutePath()))
 					continue;
 				
-				if (entry.isDirectory())
-					outputFile.mkdirs();
-				else
+				if (!entry.isDirectory())
 				{
+					boolean matchingExtension = false;
+					for (String extension : expectedFileExtensions)
+						if (outputFile.getAbsolutePath().endsWith(extension))
+							matchingExtension = true;
+					
+					if (!matchingExtension) //skip non approved file extensions
+						continue;
+					
+					//make the parent directory if it doesn't exist
 					outputFile.getParentFile().mkdirs();
+					
 					try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile)))
 					{
 						byte[] buffer = new byte[1024];

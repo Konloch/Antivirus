@@ -5,6 +5,9 @@ import com.konloch.av.downloader.impl.signatures.ClamAVDownloader;
 import com.konloch.av.downloader.impl.signatures.MalwareBazaarDownloader;
 import com.konloch.av.downloader.impl.signatures.VirusShareDownloader;
 import com.konloch.av.downloader.impl.yara.YaraDownloader;
+import com.konloch.av.downloader.impl.yara.rules.DefenderYaraDownloader;
+import com.konloch.av.downloader.impl.yara.rules.Neo23x0Downloader;
+import com.konloch.av.downloader.impl.yara.rules.ReversingLabsDownloader;
 import com.konloch.av.downloader.impl.yara.rules.YaraHubDownloader;
 
 /**
@@ -21,7 +24,10 @@ public class AVConstants
 			new VirusShareDownloader(),
 			new MalwareBazaarDownloader(),
 			new ClamAVDownloader(),
+			new DefenderYaraDownloader(),
 			new YaraHubDownloader(),
+			new ReversingLabsDownloader(),
+			new Neo23x0Downloader(),
 			new YaraDownloader(),
 	};
 }

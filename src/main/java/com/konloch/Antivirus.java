@@ -89,6 +89,8 @@ public class Antivirus
 		//print the db stats
 		Antivirus.AV.sqLiteDB.printDatabaseStatistics();
 		
+		long start = System.currentTimeMillis();
+		
 		System.out.println("Preforming malware scan...");
 		
 		String malwareType;
@@ -107,6 +109,7 @@ public class Antivirus
 			}
 		}
 		
-		System.out.println("Malware scan completed, found " + detectedFiles.size() + " types of malware");
+		long finished = System.currentTimeMillis()-start;
+		System.out.println("Malware scan completed, found " + detectedFiles.size() + " types of malware, took: " + finished + " ms");
 	}
 }

@@ -77,14 +77,14 @@ public class YaraScanner implements MalwareScanner
 			{
 				if(errorMessage.startsWith("error:"))
 				{
-					//System.out.println(errorMessage);
+					System.out.println(errorMessage);
 					
 					if(errorMessage.contains("in "))
 					{
 						String[] param = FastStringUtils.split(errorMessage, "\"");
 						String rule = param[1];
 						
-						System.out.println("Skipping rule: " + rule + ", reason: " + errorMessage);
+						System.out.println("Skipping rule: '" + rule + "', reason: " + errorMessage);
 						
 						//add rule to known "skip" rules list
 						rulesWithErrors.add(rule);
