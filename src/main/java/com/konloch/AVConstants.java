@@ -1,7 +1,11 @@
 package com.konloch;
 
 import com.konloch.av.downloader.Downloader;
-import com.konloch.av.downloader.impl.*;
+import com.konloch.av.downloader.impl.signatures.ClamAVDownloader;
+import com.konloch.av.downloader.impl.signatures.MalwareBazaarDownloader;
+import com.konloch.av.downloader.impl.signatures.VirusShareDownloader;
+import com.konloch.av.downloader.impl.yara.YaraDownloader;
+import com.konloch.av.downloader.impl.yara.rules.YaraHubDownloader;
 
 /**
  * @author Konloch

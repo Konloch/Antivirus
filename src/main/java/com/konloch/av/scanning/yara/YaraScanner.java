@@ -2,7 +2,7 @@ package com.konloch.av.scanning.yara;
 
 import com.konloch.Antivirus;
 import com.konloch.av.database.malware.MalwareScanFile;
-import com.konloch.av.downloader.impl.YaraDownloader;
+import com.konloch.av.downloader.impl.yara.YaraDownloader;
 import com.konloch.av.scanning.MalwareScanner;
 import com.konloch.util.FastStringUtils;
 

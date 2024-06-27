@@ -1,4 +1,4 @@
-package com.konloch.av.downloader.impl;
+package com.konloch.av.downloader.impl.yara.rules;
 
 import com.konloch.Antivirus;
 import com.konloch.av.downloader.DownloadState;
@@ -39,7 +39,7 @@ public class YaraHubDownloader implements Downloader
 	private void downloadUpdate() throws IOException, SQLException
 	{
 		downloadFile("https://yaraify.abuse.ch/yarahub/yaraify-rules.zip", "yara/yarahub.zip");
-		extract("yara/yarahub.zip", "yara/");
+		extract("yara/yarahub.zip", "yara/YaraHub");
 		Antivirus.AV.sqLiteDB.upsertIntegerConfig("yarahub.database.age", System.currentTimeMillis());
 	}
 	
@@ -72,15 +72,15 @@ public class YaraHubDownloader implements Downloader
 	private void extract(String databaseZipPath, String fileName) throws FileNotFoundException
 	{
 		File databaseZip = new File(Antivirus.AV.workingDirectory, databaseZipPath);
-		File updateFile = new File(Antivirus.AV.workingDirectory, fileName);
+		File extractFolder = new File(Antivirus.AV.workingDirectory, fileName);
 		
-		if(!updateFile.exists())
-			updateFile.mkdirs();
+		if(!extractFolder.exists())
+			extractFolder.mkdirs();
 		
 		if(!databaseZip.exists())
-			throw new FileNotFoundException("Yara Hub Update File Not Found: " + updateFile.getAbsolutePath());
+			throw new FileNotFoundException("Yara Hub Update File Not Found: " + extractFolder.getAbsolutePath());
 		
-		extractDatabase(databaseZip, updateFile);
+		extractDatabase(databaseZip, extractFolder);
 		
 		System.out.println("Deleting " + databaseZip.getAbsolutePath());
 		databaseZip.delete();

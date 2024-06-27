@@ -1,4 +1,4 @@
-package com.konloch.av.downloader.impl;
+package com.konloch.av.downloader.impl.signatures;
 
 import com.konloch.AVConstants;
 import com.konloch.Antivirus;

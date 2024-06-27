@@ -1,4 +1,4 @@
-package com.konloch.av.downloader.impl;
+package com.konloch.av.downloader.impl.yara;
 
 import com.konloch.Antivirus;
 import com.konloch.av.downloader.DownloadState;
@@ -23,6 +23,9 @@ import java.util.zip.ZipInputStream;
  */
 public class YaraDownloader implements Downloader
 {
+	public static StringBuilder sb = new StringBuilder();
+	public static int yaraRules;
+	
 	@Override
 	public void download(DownloadState state) throws IOException, SQLException
 	{
@@ -185,45 +188,70 @@ public class YaraDownloader implements Downloader
 		File yaraLocalRules = new File(Antivirus.AV.workingDirectory, "yara");
 		File yaraLocalFile = new File(Antivirus.AV.workingDirectory, "yara-rules.yar");
 		
+		yaraRules = 0;
 		DiskWriter.write(yaraLocalFile);
 		
-		File[] files = yaraLocalRules.listFiles();
-		int totalLength = 0;
+		loadDirectory(yaraLocalFile, yaraLocalRules);
+	}
+	
+	private static void loadDirectory(File yaraLocalFile, File directory) throws IOException
+	{
+		File[] files = directory.listFiles();
 		if(files != null)
 		{
 			for (File f : files)
 			{
-				if(!f.isFile())
-					continue;
-				
-				boolean[] writeRule = new boolean[]{true};
-				DiskReader.read(f).forEach(line ->
+				try
 				{
-					if(line.trim().startsWith("rule "))
-					{
-						String rule = FastStringUtils.split(line, "rule ")[1].trim();
-						
-						if(rule.contains(" "))
-							rule = FastStringUtils.split(rule, " ")[0].trim();
-						
-						if(rule.endsWith("{"))
-							rule = rule.substring(rule.length()-1);
-						
-						rule = rule.trim();
-						
-						//System.out.println("FOUND HERE: " + rule);
-						if(YaraScanner.rulesWithErrors.contains(rule))
-						{
-							writeRule[0] = false;
-						}
-					}
-				});
-				
-				if(!writeRule[0])
-					continue;
-				
-				DiskWriter.append(yaraLocalFile, DiskReader.readString(f) + "\n\n");
+					if (f.isFile())
+						loadFile(yaraLocalFile, f);
+					else if (f.isDirectory())
+						loadDirectory(yaraLocalFile, f);
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
+		}
+	}
+	
+	private static void loadFile(File yaraLocalFile, File file) throws IOException
+	{
+		boolean[] writeRule = new boolean[]{true};
+		DiskReader.read(file).forEach(line ->
+		{
+			if(line.trim().startsWith("rule "))
+			{
+				String rule = FastStringUtils.split(line, "rule ")[1].trim();
+				
+				if(rule.contains(" "))
+					rule = FastStringUtils.split(rule, " ")[0].trim();
+				
+				if(rule.endsWith("{"))
+					rule = rule.substring(rule.length()-1);
+				
+				rule = rule.trim();
+				
+				//System.out.println("FOUND HERE: " + rule);
+				if(YaraScanner.rulesWithErrors.contains(rule))
+				{
+					writeRule[0] = false;
+				}
+			}
+		});
+		
+		if(!writeRule[0])
+			return;
+		
+		yaraRules++;
+		
+		sb.append(DiskReader.readString(file) + "\n\n");
+		
+		if(sb.length() >= 15000)
+		{
+			DiskWriter.append(yaraLocalFile, sb.toString());
+			sb = new StringBuilder();
 		}
 	}
 }

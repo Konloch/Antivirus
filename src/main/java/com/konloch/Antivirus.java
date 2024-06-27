@@ -1,6 +1,6 @@
 package com.konloch;
 
-import com.konloch.av.downloader.impl.*;
+import com.konloch.av.downloader.impl.yara.YaraDownloader;
 import com.konloch.av.scanning.MalwareScanners;
 import com.konloch.av.database.sql.SQLiteDB;
 import com.konloch.av.database.malware.DetectedSignatureFile;
@@ -83,11 +83,11 @@ public class Antivirus
 			Thread.sleep(1);
 		}
 		
-		//print the db stats
-		Antivirus.AV.sqLiteDB.printDatabaseStatistics();
-		
 		//write mega yara file
 		YaraDownloader.loadYaraFilesIntoSingleFile();
+		
+		//print the db stats
+		Antivirus.AV.sqLiteDB.printDatabaseStatistics();
 		
 		System.out.println("Preforming malware scan...");
 		

@@ -2,6 +2,7 @@ package com.konloch.av.database.sql;
 
 import com.konloch.Antivirus;
 import com.konloch.av.database.malware.FileSignature;
+import com.konloch.av.downloader.impl.yara.YaraDownloader;
 
 import java.io.File;
 import java.sql.*;
@@ -339,9 +340,7 @@ public class SQLiteDB
 	
 	public void printDatabaseStatistics()
 	{
-		File[] yaraRules = new File(Antivirus.AV.workingDirectory, "yara").listFiles();
-		int yaraRulesCount = yaraRules == null ? 0 : yaraRules.length;
-		System.out.println("Counted " + NumberFormat.getInstance().format(Antivirus.AV.sqLiteDB.countFileSignatures()) + " malware signatures & " + NumberFormat.getInstance().format(yaraRulesCount) + " yara rules.");
+		System.out.println("Counted " + NumberFormat.getInstance().format(Antivirus.AV.sqLiteDB.countFileSignatures()) + " malware signatures & " + NumberFormat.getInstance().format(YaraDownloader.yaraRules) + " yara rules.");
 	}
 	
 	public void close()
