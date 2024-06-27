@@ -188,12 +188,19 @@ public class YaraDownloader implements Downloader
 		File yaraLocalRules = new File(Antivirus.AV.workingDirectory, "yara");
 		File yaraLocalFile = new File(Antivirus.AV.workingDirectory, "yara-rules.yar");
 		
+		//reset the rule statitics
 		yaraRules = 0;
+		
+		//write a blank file to start the writing process
 		DiskWriter.write(yaraLocalFile);
 		
+		//append all known rules, found from the yara directory
 		loadYaraRulesFromDirectory(yaraLocalFile, yaraLocalRules);
 		
+		//write all left-over buffer data
 		DiskWriter.append(yaraLocalFile, sb.toString());
+		
+		//reset the buffer
 		sb = new StringBuilder();
 	}
 	
@@ -221,6 +228,7 @@ public class YaraDownloader implements Downloader
 	
 	private static void loadFile(File yaraLocalFile, File file) throws IOException
 	{
+		//read each file to check if it contains rules that caused errors in previous scan attempts
 		boolean[] writeRule = new boolean[]{true};
 		DiskReader.read(file).forEach(line ->
 		{
@@ -241,13 +249,17 @@ public class YaraDownloader implements Downloader
 			}
 		});
 		
+		//if an erroneous rule is caught, don't use it
 		if(!writeRule[0])
 			return;
 		
+		//increase the statistics
 		yaraRules++;
 		
+		//add the rule into the mega-rule buffer
 		sb.append("include \"").append(file.getAbsolutePath()).append("\"\n");
 		
+		//write the mega-rule buffer if it's
 		if(sb.length() >= 15000)
 		{
 			DiskWriter.append(yaraLocalFile, sb.toString());
