@@ -191,10 +191,13 @@ public class YaraDownloader implements Downloader
 		yaraRules = 0;
 		DiskWriter.write(yaraLocalFile);
 		
-		loadDirectory(yaraLocalFile, yaraLocalRules);
+		loadYaraRulesFromDirectory(yaraLocalFile, yaraLocalRules);
+		
+		DiskWriter.append(yaraLocalFile, sb.toString());
+		sb = new StringBuilder();
 	}
 	
-	private static void loadDirectory(File yaraLocalFile, File directory) throws IOException
+	private static void loadYaraRulesFromDirectory(File yaraLocalFile, File directory) throws IOException
 	{
 		File[] files = directory.listFiles();
 		if(files != null)
@@ -206,7 +209,7 @@ public class YaraDownloader implements Downloader
 					if (f.isFile())
 						loadFile(yaraLocalFile, f);
 					else if (f.isDirectory())
-						loadDirectory(yaraLocalFile, f);
+						loadYaraRulesFromDirectory(yaraLocalFile, f);
 				}
 				catch (Exception e)
 				{
@@ -243,7 +246,7 @@ public class YaraDownloader implements Downloader
 		
 		yaraRules++;
 		
-		sb.append(DiskReader.readString(file) + "\n\n");
+		sb.append("include \"").append(file.getAbsolutePath()).append("\"\n\n");
 		
 		if(sb.length() >= 15000)
 		{
