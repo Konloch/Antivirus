@@ -2,3 +2,5 @@
 /.idea/
 /tests/
 *.bat
+
+dependency-reduced-pom.xml
