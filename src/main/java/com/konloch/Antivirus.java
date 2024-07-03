@@ -69,11 +69,7 @@ public class Antivirus
 	
 	public void run() throws IOException, InterruptedException
 	{
-		while(!AV.flags.updateFinished)
-		{
-			Thread.sleep(1);
-		}
-		
+		//start vm mimic
 		try
 		{
 			if (sqLiteDB.getBooleanConfig("antivirus.vm.mimic", true))
@@ -82,6 +78,12 @@ public class Antivirus
 		catch (Exception e)
 		{
 			e.printStackTrace();
+		}
+		
+		//wait for initial updates to finish
+		while(!AV.flags.updateFinished)
+		{
+			Thread.sleep(1);
 		}
 		
 		//write mega yara file
