@@ -80,6 +80,16 @@ public class SQLiteDB
 		}
 	}
 	
+	public void createInitialSettings() throws SQLException
+	{
+		//turn everything on by default
+		getBooleanConfig("antivirus.automatic.database.updates", true);
+		getBooleanConfig("antivirus.vm.mimic", true);
+		getBooleanConfig("antivirus.realtime.file.protection", true);
+		getBooleanConfig("antivirus.realtime.file.scanning", true);
+		getBooleanConfig("antivirus.realtime.process.scanning", true);
+	}
+	
 	public void insertSignature(FileSignature fileSignature)
 	{
 		signatureAddQueue.add(fileSignature);

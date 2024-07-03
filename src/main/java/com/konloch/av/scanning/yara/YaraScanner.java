@@ -4,6 +4,7 @@ import com.konloch.Antivirus;
 import com.konloch.av.database.malware.MalwareScanFile;
 import com.konloch.av.downloader.impl.yara.YaraDownloader;
 import com.konloch.av.scanning.MalwareScanner;
+import com.konloch.av.utils.WindowsUtil;
 import com.konloch.util.FastStringUtils;
 
 import java.io.*;
@@ -22,11 +23,10 @@ public class YaraScanner implements MalwareScanner
 	@Override
 	public String detectAsMalware(MalwareScanFile file)
 	{
-		boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
 		String architecture = System.getProperty("os.arch");
 		String arch;
 		
-		if(!isWindows)
+		if(!WindowsUtil.IS_WINDOWS)
 			throw new RuntimeException("This is currently windows only - YaraX might be a solution, open a ticket and let us know you need it.");
 		
 		if (architecture.equals("x86") || architecture.equals("i386") || architecture.equals("i686"))

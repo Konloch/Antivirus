@@ -4,6 +4,7 @@ import com.konloch.Antivirus;
 import com.konloch.av.downloader.DownloadState;
 import com.konloch.av.downloader.Downloader;
 import com.konloch.av.scanning.yara.YaraScanner;
+import com.konloch.av.utils.WindowsUtil;
 import com.konloch.disklib.DiskReader;
 import com.konloch.disklib.DiskWriter;
 import com.konloch.httprequest.HTTPRequest;
@@ -46,11 +47,10 @@ public class YaraDownloader implements Downloader
 	
 	private boolean downloadLatest() throws IOException, SQLException
 	{
-		boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
 		String architecture = System.getProperty("os.arch");
 		String arch;
 		
-		if(!isWindows)
+		if(!WindowsUtil.IS_WINDOWS)
 			throw new RuntimeException("This is currently windows only - YaraX might be a solution, open a ticket and let us know you need it.");
 		
 		if (architecture.equals("x86") || architecture.equals("i386") || architecture.equals("i686"))

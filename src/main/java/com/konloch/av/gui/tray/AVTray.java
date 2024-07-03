@@ -1,8 +1,11 @@
 package com.konloch.av.gui.tray;
 
+import com.konloch.Antivirus;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @author Konloch
@@ -18,14 +21,11 @@ public class AVTray
 	public AVTray() throws AWTException, IOException
 	{
 		tray = SystemTray.getSystemTray();
-		trayIcon = new TrayIcon(ImageIO.read(AVTray.class.getResourceAsStream("/img/icon.png")), "Kon's Antivirus");
+		trayIcon = new TrayIcon(ImageIO.read(Objects.requireNonNull(AVTray.class.getResourceAsStream("/img/icon.png"))), "Konloch's Antivirus");
 		trayPopup = new PopupMenu();
 		
 		toggleButton = new MenuItem("Settings");
-		toggleButton.addActionListener(e ->
-		{
-		
-		});
+		toggleButton.addActionListener(e -> Antivirus.AV.guiSettings.setVisible(true));
 		trayPopup.add(toggleButton);
 		
 		MenuItem exitButton = new MenuItem("Exit");

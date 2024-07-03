@@ -17,34 +17,46 @@ public class UpdateTask implements Runnable
 	{
 		while(Antivirus.AV.flags.running)
 		{
-			for(Downloader downloader : AVConstants.DOWNLOADERS)
+			try
 			{
+				if(Antivirus.AV.sqLiteDB.getBooleanConfig("antivirus.automatic.database.updates", true))
+				{
+					for (Downloader downloader : AVConstants.DOWNLOADERS)
+					{
+						try
+						{
+							DownloadState state = downloader.getState();
+							
+							if (state != DownloadState.NONE)
+								downloader.download(state);
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+						finally
+						{
+							Antivirus.AV.flags.updating = false;
+							Antivirus.AV.flags.updateFinished = true;
+						}
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				//wait a second
 				try
 				{
-					DownloadState state = downloader.getState();
-					
-					if(state != DownloadState.NONE)
-						downloader.download(state);
+					Thread.sleep(1000);
 				}
-				catch (Exception e)
+				catch (InterruptedException e)
 				{
 					e.printStackTrace();
 				}
-				finally
-				{
-					Antivirus.AV.flags.updating = false;
-					Antivirus.AV.flags.updateFinished = true;
-				}
-			}
-			
-			//wait for an hour
-			try
-			{
-				Thread.sleep(1000 * 60 * 60);
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
 			}
 		}
 	}

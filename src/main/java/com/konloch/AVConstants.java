@@ -19,6 +19,8 @@ import java.util.Arrays;
  */
 public class AVConstants
 {
+	public static final String VERSION = getVersion(Antivirus.class.getPackage().getImplementationVersion());
+	public static boolean DEV_MODE = false;
 	public static boolean ENABLE_SIGNATURE_SCANNING_DATABASES_IMPORT = false;
 	public static boolean ENABLE_SIGNATURE_SCANNING = false;
 	
@@ -35,4 +37,16 @@ public class AVConstants
 			new Neo23x0Downloader(),
 			new YaraDownloader()
 	));
+	
+	
+	public static String getVersion(String mavenVersion)
+	{
+		if(mavenVersion == null)
+		{
+			DEV_MODE = true;
+			return "Developer Mode";
+		}
+		
+		return "v" + mavenVersion;
+	}
 }

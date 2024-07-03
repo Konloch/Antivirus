@@ -38,6 +38,7 @@ public class Antivirus
 			//load the sql db
 			sqLiteDB.connect();
 			sqLiteDB.createNewTable();
+			sqLiteDB.createInitialSettings();
 			
 			//start the update task
 			new Thread(new UpdateTask(), "Update-Task").start();
