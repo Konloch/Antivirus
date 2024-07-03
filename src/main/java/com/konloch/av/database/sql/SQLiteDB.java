@@ -302,6 +302,16 @@ public class SQLiteDB
 		return defaultValue;
 	}
 	
+	public Boolean getBooleanConfig(String key) throws SQLException
+	{
+		return getBooleanConfig(key, false);
+	}
+	
+	public Boolean getBooleanConfig(String key, boolean defaultValue) throws SQLException
+	{
+		return Boolean.parseBoolean(getStringConfig(key, String.valueOf(defaultValue)));
+	}
+	
 	public void upsertIntegerConfig(String key, int value) throws SQLException
 	{
 		String query = "INSERT OR REPLACE INTO config_integer (key, value) VALUES (?, ?)";
@@ -336,6 +346,11 @@ public class SQLiteDB
 			pstmt.setString(2, value);
 			pstmt.executeUpdate();
 		}
+	}
+	
+	public void upsertBooleanConfig(String key, boolean value) throws SQLException
+	{
+		upsertStringConfig(key, String.valueOf(value));
 	}
 	
 	public void printDatabaseStatistics()
