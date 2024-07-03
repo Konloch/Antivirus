@@ -1,12 +1,15 @@
 package com.konloch;
 
 import com.konloch.av.downloader.impl.yara.YaraDownloader;
+import com.konloch.av.gui.AVSettingsGUI;
+import com.konloch.av.gui.tray.AVTray;
 import com.konloch.av.scanning.MalwareScanners;
 import com.konloch.av.database.sql.SQLiteDB;
 import com.konloch.av.database.malware.DetectedSignatureFile;
 import com.konloch.av.database.malware.MalwareScanFile;
 import com.konloch.av.tasks.UpdateTask;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,6 +26,8 @@ public class Antivirus
 	public final SQLiteDB sqLiteDB = new SQLiteDB();
 	public final MalwareScanners scanners = new MalwareScanners();
 	public final AVFlags flags = new AVFlags();
+	public AVTray tray;
+	public AVSettingsGUI guiSettings;
 	
 	public void startup()
 	{
@@ -43,7 +48,23 @@ public class Antivirus
 		}
 	}
 	
-	public void run(String[] args) throws IOException, InterruptedException
+	public void initGUI()
+	{
+		try
+		{
+			if(!GraphicsEnvironment.isHeadless())
+			{
+				guiSettings = new AVSettingsGUI();
+				tray = new AVTray();
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void run() throws IOException, InterruptedException
 	{
 		while(!AV.flags.updateFinished)
 		{
@@ -54,8 +75,11 @@ public class Antivirus
 		YaraDownloader.loadYaraFilesIntoSingleFile();
 		
 		//print the db stats
-		Antivirus.AV.sqLiteDB.printDatabaseStatistics();
-		
+		sqLiteDB.printDatabaseStatistics();
+	}
+	
+	public void scan(String... args)
+	{
 		long start = System.currentTimeMillis();
 		
 		System.out.println("Preforming malware scan...");
@@ -108,14 +132,16 @@ public class Antivirus
 	
 	public static void main(String[] args) throws InterruptedException, IOException
 	{
-		if(args.length == 0)
-		{
-			System.out.println("Incorrect launch arguments, try passing a file or directory.");
-			return;
-		}
-		
+		boolean CLI = args.length != 0;
 		AV = new Antivirus();
 		AV.startup();
-		AV.run(args);
+		
+		if(!CLI)
+			AV.initGUI();
+		
+		AV.run();
+		
+		if(CLI)
+			AV.scan(args);
 	}
 }
