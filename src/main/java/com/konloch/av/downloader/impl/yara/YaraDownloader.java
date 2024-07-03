@@ -69,7 +69,7 @@ public class YaraDownloader implements Downloader
 				int startIndex = line.indexOf("href=\"") + 6;
 				int endIndex = line.indexOf("\"", startIndex);
 				String url = "https://github.com" + line.substring(startIndex, endIndex);
-				String version = FastStringUtils.split(url, "/")[6];
+				String version = FastStringUtils.split(url, "/VirusTotal/yara/releases/tag/")[1];
 				String downloadURL = "https://github.com/VirusTotal/yara/releases/expanded_assets/" + version;
 				
 				if(version.isEmpty()) //failed to fetch correctly
