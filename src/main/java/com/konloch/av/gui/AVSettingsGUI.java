@@ -58,7 +58,7 @@ public class AVSettingsGUI extends JFrame
 	public AVSettingsGUI() throws IOException, SQLException
 	{
 		setTitle("Konloch's Antivirus " + AVConstants.VERSION);
-		setIconImage(ImageIO.read(Objects.requireNonNull(AVTray.class.getResourceAsStream("/img/icon.png"))));
+		setIconImage(ImageIO.read(Objects.requireNonNull(AVTray.class.getResourceAsStream("/res/img/icon.png"))));
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setLayout(new BorderLayout());
 		
@@ -73,6 +73,11 @@ public class AVSettingsGUI extends JFrame
 			addSettingEntry("VM Mimic", "antivirus.vm.mimic", (value) ->
 			{
 				boolean active = (boolean) value.getSource();
+				
+				if(active)
+					Antivirus.AV.mimicVM.enable();
+				else
+					Antivirus.AV.mimicVM.disable();
 			});
 			
 			addSettingEntry("Real-time File Protection", "antivirus.realtime.file.protection", (value) ->

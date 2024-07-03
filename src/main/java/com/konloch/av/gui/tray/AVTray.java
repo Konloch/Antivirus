@@ -21,7 +21,7 @@ public class AVTray
 	public AVTray() throws AWTException, IOException
 	{
 		tray = SystemTray.getSystemTray();
-		trayIcon = new TrayIcon(ImageIO.read(Objects.requireNonNull(AVTray.class.getResourceAsStream("/img/icon.png"))), "Konloch's Antivirus");
+		trayIcon = new TrayIcon(ImageIO.read(Objects.requireNonNull(AVTray.class.getResourceAsStream("/res/img/icon.png"))), "Konloch's Antivirus");
 		trayPopup = new PopupMenu();
 		
 		toggleButton = new MenuItem("Settings");

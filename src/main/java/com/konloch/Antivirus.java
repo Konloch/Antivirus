@@ -3,6 +3,7 @@ package com.konloch;
 import com.konloch.av.downloader.impl.yara.YaraDownloader;
 import com.konloch.av.gui.AVSettingsGUI;
 import com.konloch.av.gui.tray.AVTray;
+import com.konloch.av.mimicvm.MimicVM;
 import com.konloch.av.scanning.MalwareScanners;
 import com.konloch.av.database.sql.SQLiteDB;
 import com.konloch.av.database.malware.DetectedSignatureFile;
@@ -26,6 +27,7 @@ public class Antivirus
 	public final SQLiteDB sqLiteDB = new SQLiteDB();
 	public final MalwareScanners scanners = new MalwareScanners();
 	public final AVFlags flags = new AVFlags();
+	public final MimicVM mimicVM = new MimicVM();
 	public AVTray tray;
 	public AVSettingsGUI guiSettings;
 	
@@ -70,6 +72,16 @@ public class Antivirus
 		while(!AV.flags.updateFinished)
 		{
 			Thread.sleep(1);
+		}
+		
+		try
+		{
+			if (sqLiteDB.getBooleanConfig("antivirus.vm.mimic", true))
+				mimicVM.enable();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 		
 		//write mega yara file
