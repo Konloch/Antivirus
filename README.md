@@ -1,5 +1,5 @@
 # Antivirus
-Built on top of existing AV Databases and tools we utilize experimental modules and large signature databases to preform thorough scans. The tool is still early in development.
+Built on top of existing AV Databases and tools - we utilize experimental modules and large signature databases to preform thorough scans. The tool is still early in development.
 
 ![Screenshot-1](.github/screen-1.png "Screenshot-1")
 
