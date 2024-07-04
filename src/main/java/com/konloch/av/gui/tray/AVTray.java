@@ -25,7 +25,11 @@ public class AVTray
 		trayPopup = new PopupMenu();
 		
 		toggleButton = new MenuItem("Settings");
-		toggleButton.addActionListener(e -> Antivirus.AV.guiSettings.setVisible(true));
+		toggleButton.addActionListener(e ->
+		{
+			Antivirus.AV.guiSettings.setVisible(true);
+			Antivirus.AV.guiSettings.requestFocus();
+		});
 		trayPopup.add(toggleButton);
 		
 		MenuItem exitButton = new MenuItem("Exit");
