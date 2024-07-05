@@ -58,7 +58,7 @@ public class AVScannerGUI extends JFrame
 			webView.setOnDragDropped(this::dragDropped);
 		});
 		
-		setSize(1920/3, 1080/3);
+		setSize(1920/3, 460);
 		setLocationRelativeTo(null);
 	}
 	

@@ -113,7 +113,7 @@ public class ScanSpecific extends Scan
 							if(selectedFile.exists())
 							{
 								//TODO extract file from malware type
-								detectedFiles.add(new ScannedFile(selectedFile.getName(), "Detected", selectedFile));
+								detectedFiles.add(new ScannedFile(selectedFile.getName(), "Detected...", selectedFile));
 								detected = true;
 							}
 						}
@@ -122,7 +122,7 @@ public class ScanSpecific extends Scan
 					System.out.println("Detected: " + malwareType);
 					
 					if(!detected)
-						detectedFiles.add(new ScannedFile(scanFile.getName(), "Detected", scanFile));
+						detectedFiles.add(new ScannedFile(scanFile.getName(), "Detected...", scanFile));
 				}
 				
 				AVGUI.GUI.scanEngine.getLatestScan().finishedScans++;
