@@ -21,10 +21,13 @@ public class AVConstants
 {
 	public static final String VERSION = getVersion(Antivirus.class.getPackage().getImplementationVersion());
 	public static boolean DEV_MODE = false;
-	public static String TITLE = "Antivirus";
+	public static String TITLE = "Antivirus+";
 	
 	public static boolean ENABLE_SIGNATURE_SCANNING_DATABASES_IMPORT = false;
 	public static boolean ENABLE_SIGNATURE_SCANNING = false;
+	public static boolean ENABLE_REALTIME_FILE_PROTECTION = false;
+	public static boolean ENABLE_REALTIME_FILE_SCANNING = false;
+	public static boolean ENABLE_REALTIME_PROCESS_SCANNING = false;
 	
 	public static final String SIGNATURE_IDENTIFIER_VIRUSSHARE_SUBMISSION = "2";
 	public static final String SIGNATURE_IDENTIFIER_MALWAREBAZAAR_SUBMISSION = "3";

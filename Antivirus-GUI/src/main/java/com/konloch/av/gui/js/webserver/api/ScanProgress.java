@@ -11,10 +11,10 @@ public class ScanProgress
 	public int progress;
 	public List<ScannedFile> scannedFiles;
 	public String currentFile;
-	public int duration;
-	public int remaining;
+	public String duration;
+	public String remaining;
 	
-	public ScanProgress(int progress, List<ScannedFile> scannedFiles, String currentFile, int duration, int remaining)
+	public ScanProgress(int progress, List<ScannedFile> scannedFiles, String currentFile, String duration, String remaining)
 	{
 		this.progress = progress;
 		this.scannedFiles = scannedFiles;

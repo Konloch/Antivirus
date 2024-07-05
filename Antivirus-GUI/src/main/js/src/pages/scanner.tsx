@@ -6,8 +6,8 @@ export default function Scanner() {
   const [scanType, setScanType] = useState(null)
   const [scanProgress, setScanProgress] = useState(0)
   const [scannedFiles, setScannedFiles] = useState([])
-  const [scanDuration, setScanDuration] = useState(0)
-  const [scanRemaining, setScanRemaining] = useState(0)
+  const [scanDuration, setScanDuration] = useState("")
+  const [scanRemaining, setScanRemaining] = useState("")
   const [currentFile, setCurrentFile] = useState("")
   const [isScanning, setIsScanning] = useState(false)
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function Scanner() {
             setScanDuration(data.duration)
             setScanRemaining(data.remaining)
           })
-      }, 1000)
+      }, 100)
     }
     return () => clearInterval(interval)
   }, [isScanning])
@@ -46,8 +46,8 @@ export default function Scanner() {
       setScanType(null)
       setScanProgress(0)
       setScannedFiles([])
-      setScanDuration(0)
-      setScanRemaining(0)
+      setScanDuration("")
+      setScanRemaining("")
       setCurrentFile("")
     })
   }
@@ -58,6 +58,7 @@ export default function Scanner() {
           <Button onClick={() => handleScan("quick")}>Quick Scan</Button>
           <Button onClick={() => handleScan("full")}>Full Scan</Button>
           <Button onClick={() => handleScan("specific")}>Specific File/Folder Scan</Button>
+          <div className="text-center"><i>(Drag & drop any file / folder)</i></div>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-4 w-full max-w-md">
@@ -77,10 +78,10 @@ export default function Scanner() {
             ))}
           </div>
           <div className="flex items-center justify-between w-full">
-            <span>Scan Duration: {scanDuration}s</span>
-            <span>Remaining: {scanRemaining}s</span>
+            <span>{scanDuration}</span>
+            <span>{scanRemaining}</span>
           </div>
-          <div className="text-center">Currently Scanning: {currentFile}</div>
+          <div className="text-center">{currentFile}</div>
           <Button onClick={handleStopScan}>Stop Scan</Button>
         </div>
       )}

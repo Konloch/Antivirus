@@ -1,5 +1,6 @@
 package com.konloch.av.gui.settings;
 
+import com.konloch.AVConstants;
 import com.konloch.Antivirus;
 import com.konloch.av.utils.WindowsUtil;
 
@@ -32,20 +33,23 @@ public class AVSettings
 					Antivirus.AV.mimicVM.disable();
 			});
 			
-			addSettingEntry("Real-time File Protection", "antivirus.realtime.file.protection", (value) ->
-			{
-				boolean active = (boolean) value.getSource();
-			});
+			if(AVConstants.ENABLE_REALTIME_FILE_PROTECTION)
+				addSettingEntry("Real-time File Protection", "antivirus.realtime.file.protection", (value) ->
+				{
+					boolean active = (boolean) value.getSource();
+				});
 			
-			addSettingEntry("Real-time File Scanning", "antivirus.realtime.file.scanning", (value) ->
-			{
-				boolean active = (boolean) value.getSource();
-			});
+			if(AVConstants.ENABLE_REALTIME_FILE_SCANNING)
+				addSettingEntry("Real-time File Scanning", "antivirus.realtime.file.scanning", (value) ->
+				{
+					boolean active = (boolean) value.getSource();
+				});
 			
-			addSettingEntry("Real-time Process Scanning", "antivirus.realtime.process.scanning", (value) ->
-			{
-				boolean active = (boolean) value.getSource();
-			});
+			if(AVConstants.ENABLE_REALTIME_PROCESS_SCANNING)
+				addSettingEntry("Real-time Process Scanning", "antivirus.realtime.process.scanning", (value) ->
+				{
+					boolean active = (boolean) value.getSource();
+				});
 		}
 	}
 	

@@ -7,6 +7,7 @@ import com.konloch.av.gui.settings.AVSettings;
 import com.konloch.av.gui.js.AVSettingsGUI;
 import com.konloch.av.gui.swing.AVFailedToBind;
 import com.konloch.av.gui.tray.AVTray;
+import com.konloch.av.scanengine.ScanEngine;
 import com.konloch.av.utils.SwingUtils;
 
 import java.awt.*;
@@ -20,6 +21,8 @@ public class AVGUI
 {
 	public static AVGUI GUI;
 	
+	public ScanEngine scanEngine;
+	
 	public AVTray tray;
 	public AVSettings avSettings;
 	public AVScannerGUI guiScanner;
@@ -31,6 +34,10 @@ public class AVGUI
 		{
 			if(!GraphicsEnvironment.isHeadless())
 			{
+				//init extended core
+				scanEngine = new ScanEngine();
+				
+				//init gui
 				avSettings = new AVSettings();
 				guiSettings = new AVSettingsGUI();
 				guiScanner = new AVScannerGUI();
@@ -38,6 +45,9 @@ public class AVGUI
 				
 				//init settings
 				avSettings.init();
+				
+				//start scan engine
+				scanEngine.init();
 			}
 		}
 		catch (Exception e)

@@ -1,5 +1,6 @@
 package com.konloch.av.gui.js.webserver;
 
+import com.google.gson.reflect.TypeToken;
 import com.konloch.av.gui.AVGUI;
 import com.konloch.av.gui.js.webserver.api.ScanProgress;
 import com.konloch.av.gui.js.webserver.http.client.ClientBuffer;
@@ -42,7 +43,7 @@ public class AVRequestListener implements RequestListener
 			case "/api/settings/change":
 			{
 				String settingsChangeJson = new String(clientBuffer.bodyBuffer.toByteArray(), StandardCharsets.UTF_8);
-				Map<String, Boolean> settingsMap = AVWebserver.gson.fromJson(settingsChangeJson, Map.class);
+				Map<String, Boolean> settingsMap = AVWebserver.gson.fromJson(settingsChangeJson, new TypeToken<Map<String, Boolean>>(){}.getType());
 				
 				if(settingsMap == null)
 					return "".getBytes(StandardCharsets.UTF_8);
@@ -68,28 +69,67 @@ public class AVRequestListener implements RequestListener
 			
 			case "/api/scan/quick":
 			{
+				AVGUI.GUI.scanEngine.scanGUIStage = 1;
 				//TODO quick scan
 				return "".getBytes(StandardCharsets.UTF_8);
 			}
 				
 			case "/api/scan/full":
 			{
+				AVGUI.GUI.scanEngine.scanGUIStage = 1;
 				//TODO full computer scan
 				return "".getBytes(StandardCharsets.UTF_8);
 			}
 				
 			case "/api/scan/specific":
 			{
-				//TODO prompt file select dialogue & start scanning
+				AVGUI.GUI.scanEngine.scanGUIStage = 1;
+				AVGUI.GUI.scanEngine.scanSpecific();
+				return "".getBytes(StandardCharsets.UTF_8);
+			}
+			
+			case "/api/scan/stop":
+			{
+				AVGUI.GUI.scanEngine.scanGUIStage = 0;
 				return "".getBytes(StandardCharsets.UTF_8);
 			}
 			
 			case "/api/scan/status":
 			{
-				ScanProgress progress = new ScanProgress(0, new ArrayList<>(),
-						"File5.txt", 50, 120);
-				String jsonString = AVWebserver.gson.toJson(progress);
-				return jsonString.getBytes(StandardCharsets.UTF_8);
+				if(AVGUI.GUI != null && AVGUI.GUI.scanEngine != null && AVGUI.GUI.scanEngine.getLatestScan() != null)
+				{
+					String duration = "Scan Duration: " + AVGUI.GUI.scanEngine.getLatestScan().getDuration();
+					String estimation;
+					
+					if(AVGUI.GUI.scanEngine.getLatestScan().estimateTotalTimeLeft() == 0)
+					{
+						if (AVGUI.GUI.scanEngine.getLatestScan().scanFinished)
+							estimation = "Scan Finished";
+						else
+							estimation = "Calculating Remainder...";
+					}
+					else
+						estimation = "Remaining: " + AVGUI.GUI.scanEngine.getLatestScan().getEstimation();
+					
+					ScanProgress progress = new ScanProgress(AVGUI.GUI.scanEngine.getLatestScan().progress,
+							AVGUI.GUI.scanEngine.getLatestScan().detectedFiles,
+							AVGUI.GUI.scanEngine.getLatestScan().latestUpdate,
+							duration,
+							estimation);
+					String jsonString = AVWebserver.gson.toJson(progress);
+					return jsonString.getBytes(StandardCharsets.UTF_8);
+				}
+				else
+				{
+					//TODO detect state and alert based on that
+					ScanProgress progress = new ScanProgress(0,
+							new ArrayList<>(),
+							"Waiting for scanner engine to start...",
+							"",
+							"");
+					String jsonString = AVWebserver.gson.toJson(progress);
+					return jsonString.getBytes(StandardCharsets.UTF_8);
+				}
 			}
 			
 			default:
@@ -99,7 +139,8 @@ public class AVRequestListener implements RequestListener
 				
 				//block all requests that do not start with the random path identifier
 				//   + .css and .js are whitelisted to allow the web-app to work
-				if (!(lowerCasePath.endsWith(".css") || lowerCasePath.endsWith(".js")) && !path.startsWith(AVWebserver.RANDOM_PATH_IDENTIFIER))
+				if (!(lowerCasePath.endsWith(".css") || lowerCasePath.endsWith(".js"))
+						&& !path.startsWith(AVWebserver.RANDOM_PATH_IDENTIFIER))
 				{
 					request.setReturnCode(404);
 					return "Error 404 file not found".getBytes(StandardCharsets.UTF_8);
