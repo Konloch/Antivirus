@@ -234,7 +234,7 @@ public class YaraDownloader implements Downloader
 		{
 			if(line.trim().startsWith("rule "))
 			{
-				String rule = FastStringUtils.split(line, "rule ")[0].trim();
+				String rule = FastStringUtils.split(line, "rule ")[1].trim();
 				
 				if(rule.contains(" "))
 					rule = FastStringUtils.split(rule, " ")[0].trim();
