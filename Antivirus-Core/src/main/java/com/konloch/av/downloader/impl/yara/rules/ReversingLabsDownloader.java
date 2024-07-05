@@ -2,14 +2,9 @@ package com.konloch.av.downloader.impl.yara.rules;
 
 import com.konloch.Antivirus;
 import com.konloch.av.downloader.DownloadState;
-import com.konloch.av.downloader.Downloader;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * Downloads & extracts Yara Rules from Reversing Labs

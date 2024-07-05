@@ -7,7 +7,8 @@ import com.konloch.av.downloader.DownloadState;
 import com.konloch.av.downloader.Downloader;
 
 import java.io.*;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.SQLException;
 
 import static com.konloch.AVConstants.SIGNATURE_IDENTIFIER_VIRUSSHARE_SUBMISSION;

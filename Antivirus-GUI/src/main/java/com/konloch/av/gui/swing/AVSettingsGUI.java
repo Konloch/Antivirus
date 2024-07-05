@@ -1,4 +1,4 @@
-package com.konloch.av.gui;
+package com.konloch.av.gui.swing;
 
 import com.konloch.AVConstants;
 import com.konloch.Antivirus;
@@ -57,7 +57,7 @@ public class AVSettingsGUI extends JFrame
 	
 	public AVSettingsGUI() throws IOException, SQLException
 	{
-		setTitle("Konloch's Antivirus " + AVConstants.VERSION);
+		setTitle(AVConstants.TITLE + " " + AVConstants.VERSION);
 		setIconImage(ImageIO.read(Objects.requireNonNull(AVTray.class.getResourceAsStream("/res/img/icon.png"))));
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setLayout(new BorderLayout());

@@ -2,7 +2,6 @@ package com.konloch.av.jna;
 
 import com.sun.jna.Structure;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

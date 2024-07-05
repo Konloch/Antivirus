@@ -1,16 +1,13 @@
 package com.konloch;
 
-import com.konloch.av.downloader.impl.yara.YaraDownloader;
-import com.konloch.av.gui.AVSettingsGUI;
-import com.konloch.av.gui.tray.AVTray;
-import com.konloch.av.mimicvm.MimicVM;
-import com.konloch.av.scanning.MalwareScanners;
-import com.konloch.av.database.sql.SQLiteDB;
 import com.konloch.av.database.malware.DetectedSignatureFile;
 import com.konloch.av.database.malware.MalwareScanFile;
+import com.konloch.av.database.sql.SQLiteDB;
+import com.konloch.av.downloader.impl.yara.YaraDownloader;
+import com.konloch.av.mimicvm.MimicVM;
+import com.konloch.av.scanning.MalwareScanners;
 import com.konloch.av.tasks.UpdateTask;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,8 +25,6 @@ public class Antivirus
 	public final MalwareScanners scanners = new MalwareScanners();
 	public final AVFlags flags = new AVFlags();
 	public final MimicVM mimicVM = new MimicVM();
-	public AVTray tray;
-	public AVSettingsGUI guiSettings;
 	
 	public void startup()
 	{
@@ -44,22 +39,6 @@ public class Antivirus
 			
 			//start the update task
 			new Thread(new UpdateTask(), "Update-Task").start();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	public void initGUI()
-	{
-		try
-		{
-			if(!GraphicsEnvironment.isHeadless())
-			{
-				guiSettings = new AVSettingsGUI();
-				tray = new AVTray();
-			}
 		}
 		catch (Exception e)
 		{
@@ -143,20 +122,5 @@ public class Antivirus
 		}
 		
 		return workingDirectory;
-	}
-	
-	public static void main(String[] args) throws InterruptedException, IOException
-	{
-		boolean CLI = args.length != 0;
-		AV = new Antivirus();
-		AV.startup();
-		
-		if(!CLI)
-			AV.initGUI();
-		
-		AV.run();
-		
-		if(CLI)
-			AV.scan(args);
 	}
 }

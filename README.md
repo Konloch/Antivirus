@@ -19,8 +19,9 @@ Built on top of existing AV Databases and tools - we utilize experimental module
 + Run YaraAntiVirus with the argument of the file or folder you want to scan
 
 ## Requires
-+ Java 1.8
-+ Windows 10 (Earlier versions probably work)
++ Java 1.8 (For Antivirus-Core)
++ Java 22 (For Antivirus-GUI)
++ Windows 11 (Earlier versions probably work)
 
 ## Notes
-+ Yara integration is powered by Yara CLI
++ Yara integration is powered by [Yara CLI](https://github.com/VirusTotal/yara)
