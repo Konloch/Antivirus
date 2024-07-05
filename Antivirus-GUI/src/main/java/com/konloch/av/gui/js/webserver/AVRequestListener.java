@@ -1,6 +1,7 @@
 package com.konloch.av.gui.js.webserver;
 
 import com.konloch.av.gui.AVGUI;
+import com.konloch.av.gui.js.webserver.api.ScanProgress;
 import com.konloch.av.gui.js.webserver.http.client.ClientBuffer;
 import com.konloch.av.gui.js.webserver.http.request.Request;
 import com.konloch.av.gui.js.webserver.http.request.RequestListener;
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -51,6 +53,10 @@ public class AVRequestListener implements RequestListener
 					boolean settingValue = entry.getValue();
 					
 					AVSettingsEntry settingsEntry = AVGUI.GUI.avSettings.settings.get(settingName);
+					
+					if(settingsEntry == null)
+						continue;
+					
 					settingsEntry.value = settingValue;
 					settingsEntry.onChange.stateChanged(new ChangeEvent(settingValue));
 					
@@ -61,16 +67,30 @@ public class AVRequestListener implements RequestListener
 			}
 			
 			case "/api/scan/quick":
+			{
+				//TODO quick scan
 				return "".getBytes(StandardCharsets.UTF_8);
+			}
 				
 			case "/api/scan/full":
+			{
+				//TODO full computer scan
 				return "".getBytes(StandardCharsets.UTF_8);
+			}
 				
 			case "/api/scan/specific":
+			{
+				//TODO prompt file select dialogue & start scanning
 				return "".getBytes(StandardCharsets.UTF_8);
+			}
 			
 			case "/api/scan/status":
-				return ("{\n" + "  \"progress\": 50,\n" + "  \"scannedFiles\": [\n" + "    {\n" + "      \"name\": \"file1.txt\",\n" + "      \"status\": \"Quarantined\"\n" + "    },\n" + "    {\n" + "      \"name\": \"file2.exe\",\n" + "      \"status\": \"Clean\"\n" + "    }\n" + "  ],\n" + "  \"currentFile\": \"file3.docx\",\n" + "  \"duration\": 120,\n" + "  \"remaining\": 30\n" + "}").getBytes(StandardCharsets.UTF_8);
+			{
+				ScanProgress progress = new ScanProgress(0, new ArrayList<>(),
+						"File5.txt", 50, 120);
+				String jsonString = AVWebserver.gson.toJson(progress);
+				return jsonString.getBytes(StandardCharsets.UTF_8);
+			}
 			
 			default:
 			{
