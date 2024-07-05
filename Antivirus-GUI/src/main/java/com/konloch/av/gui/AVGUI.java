@@ -1,7 +1,9 @@
 package com.konloch.av.gui;
 
 import com.konloch.Antivirus;
-import com.konloch.av.gui.swing.AVSettingsGUI;
+import com.konloch.av.gui.js.AVScannerGUI;
+import com.konloch.av.gui.settings.AVSettings;
+import com.konloch.av.gui.js.AVSettingsGUI;
 import com.konloch.av.gui.tray.AVTray;
 
 import java.awt.*;
@@ -16,6 +18,8 @@ public class AVGUI
 	public static AVGUI GUI;
 	
 	public AVTray tray;
+	public AVSettings avSettings;
+	public AVScannerGUI guiScanner;
 	public AVSettingsGUI guiSettings;
 	
 	public void initGUI()
@@ -24,8 +28,13 @@ public class AVGUI
 		{
 			if(!GraphicsEnvironment.isHeadless())
 			{
+				avSettings = new AVSettings();
 				guiSettings = new AVSettingsGUI();
+				guiScanner = new AVScannerGUI();
 				tray = new AVTray();
+				
+				//init settings
+				avSettings.init();
 			}
 		}
 		catch (Exception e)
@@ -50,5 +59,10 @@ public class AVGUI
 		
 		if(CLI)
 			Antivirus.AV.scan(args);
+		else
+			AVGUI.GUI.guiScanner.setVisible(true);
+		
+		//print the db stats
+		Antivirus.AV.sqLiteDB.printDatabaseStatistics();
 	}
 }

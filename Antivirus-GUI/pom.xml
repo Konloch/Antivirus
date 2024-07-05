@@ -52,6 +52,26 @@
 			<version>0.0.1</version>
 		</dependency>
 		<dependency>
+			<groupId>com.konloch</groupId>
+			<artifactId>Socket-Server</artifactId>
+			<version>0.9.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.konloch</groupId>
+			<artifactId>FastStringUtils</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.konloch</groupId>
+			<artifactId>DiskLib</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx</artifactId>
 			<version>22.0.1</version>

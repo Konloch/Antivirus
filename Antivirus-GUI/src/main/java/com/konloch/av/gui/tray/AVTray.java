@@ -1,7 +1,6 @@
 package com.konloch.av.gui.tray;
 
 import com.konloch.AVConstants;
-import com.konloch.Antivirus;
 import com.konloch.av.gui.AVGUI;
 
 import javax.imageio.ImageIO;
@@ -18,7 +17,8 @@ public class AVTray
 	public SystemTray tray;
 	public TrayIcon trayIcon;
 	public PopupMenu trayPopup;
-	public MenuItem toggleButton;
+	public MenuItem settings;
+	public MenuItem scanner;
 	
 	public AVTray() throws AWTException, IOException
 	{
@@ -26,13 +26,21 @@ public class AVTray
 		trayIcon = new TrayIcon(ImageIO.read(Objects.requireNonNull(AVTray.class.getResourceAsStream("/res/img/icon.png"))), AVConstants.TITLE);
 		trayPopup = new PopupMenu();
 		
-		toggleButton = new MenuItem("Settings");
-		toggleButton.addActionListener(e ->
+		scanner = new MenuItem("Scanner");
+		scanner.addActionListener(e ->
+		{
+			AVGUI.GUI.guiScanner.setVisible(true);
+			AVGUI.GUI.guiScanner.requestFocus();
+		});
+		trayPopup.add(scanner);
+		
+		settings = new MenuItem("Settings");
+		settings.addActionListener(e ->
 		{
 			AVGUI.GUI.guiSettings.setVisible(true);
 			AVGUI.GUI.guiSettings.requestFocus();
 		});
-		trayPopup.add(toggleButton);
+		trayPopup.add(settings);
 		
 		MenuItem exitButton = new MenuItem("Exit");
 		exitButton.addActionListener(e -> System.exit(0));

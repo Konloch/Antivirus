@@ -67,9 +67,6 @@ public class Antivirus
 		
 		//write mega yara file
 		YaraDownloader.loadYaraFilesIntoSingleFile();
-		
-		//print the db stats
-		sqLiteDB.printDatabaseStatistics();
 	}
 	
 	public void scan(String... args)
