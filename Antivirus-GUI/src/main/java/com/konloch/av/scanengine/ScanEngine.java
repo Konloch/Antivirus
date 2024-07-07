@@ -52,9 +52,20 @@ public class ScanEngine
 		latestScan = activeScan = new ScanSpecific();
 	}
 	
+	public void scanStop()
+	{
+		activeScan = null;
+		System.out.println("STOPPED SCAN");
+	}
+	
 	public void finished()
 	{
 		activeScan = null;
+	}
+	
+	public Scan getActiveScan()
+	{
+		return activeScan;
 	}
 	
 	public Scan getLatestScan()

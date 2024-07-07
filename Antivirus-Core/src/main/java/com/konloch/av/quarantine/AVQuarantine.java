@@ -47,7 +47,7 @@ public class AVQuarantine
 		//TODO move file back to where it came from
 		
 		Antivirus.AV.sqLiteDB.removeFromQuarantine(id);
-		quarantineList.removeIf(fQ -> fQ.id == id);
+		quarantineList.removeIf(fQ -> fQ == null || fQ.id == id);
 		
 		//TODO
 		return false;
@@ -58,7 +58,7 @@ public class AVQuarantine
 		//TODO delete from the quarantine folder
 		
 		Antivirus.AV.sqLiteDB.removeFromQuarantine(id);
-		quarantineList.removeIf(fQ -> fQ.id == id);
+		quarantineList.removeIf(fQ -> fQ == null || fQ.id == id);
 		
 		return false;
 	}
@@ -67,7 +67,11 @@ public class AVQuarantine
 	{
 		Antivirus.AV.quarantine.quarantineList.removeIf(fileQuarantine ->
 		{
-			Antivirus.AV.quarantine.removeFile(fileQuarantine.id);
+			if(fileQuarantine == null)
+				return true;
+			
+			Antivirus.AV.sqLiteDB.removeFromQuarantine(fileQuarantine.id);
+			
 			return true;
 		});
 	}

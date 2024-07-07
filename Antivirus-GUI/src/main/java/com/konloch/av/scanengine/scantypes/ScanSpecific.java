@@ -89,6 +89,10 @@ public class ScanSpecific extends Scan
 			int count = 0;
 			for(File scanFile : scanFiles)
 			{
+				//check for scan cancelling
+				if(AVGUI.GUI.scanEngine.getActiveScan() == null)
+					break;
+				
 				if(!scanFile.exists())
 				{
 					AVGUI.GUI.scanEngine.getLatestScan().finishedScans++;

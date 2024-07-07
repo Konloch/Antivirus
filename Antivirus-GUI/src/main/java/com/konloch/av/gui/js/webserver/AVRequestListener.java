@@ -77,7 +77,6 @@ public class AVRequestListener implements RequestListener
 				
 				if(action != null)
 				{
-					System.out.println("ACT: " + action);
 					switch(action)
 					{
 						case "getFiles":
@@ -91,7 +90,6 @@ public class AVRequestListener implements RequestListener
 						case "removeFile":
 							id = Integer.parseInt(request.getPost().get("id"));
 							Antivirus.AV.quarantine.removeFile(id);
-							System.out.println("OK: " + id);
 							break;
 							
 						case "reportFalsePositive":
@@ -131,6 +129,7 @@ public class AVRequestListener implements RequestListener
 			case "/api/scan/stop":
 			{
 				AVGUI.GUI.scanEngine.scanGUIStage = 0;
+				AVGUI.GUI.scanEngine.scanStop();
 				return "".getBytes(StandardCharsets.UTF_8);
 			}
 			
