@@ -1,5 +1,6 @@
 # Antivirus+
 ![Screenshot-1](.github/screen-1.png "Screenshot-1")
+![Screenshot-2](.github/screen-2.png "Screenshot-2")
 
 ## General Features
 + Mixes both static and dynamic file scanning
@@ -36,3 +37,8 @@
 
 ## Notes
 + Yara integration is powered by [Yara CLI](https://github.com/VirusTotal/yara)
+
+## More Media
+
+![Screenshot-3](.github/screen-3.gif "Screenshot-3")
+![Screenshot-4](.github/screen-4.gif "Screenshot-4")
