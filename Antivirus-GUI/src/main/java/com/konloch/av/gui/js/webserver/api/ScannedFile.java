@@ -9,12 +9,14 @@ import java.io.File;
 public class ScannedFile
 {
 	public String name;
+	public String path;
 	public String status;
 	public transient File file;
 	
-	public ScannedFile(String name, String status, File file)
+	public ScannedFile(String name, String path, String status, File file)
 	{
 		this.name = name;
+		this.path = path;
 		this.status = status;
 		this.file = file;
 	}

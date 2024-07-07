@@ -2,7 +2,6 @@ package com.konloch.av.scanengine;
 
 import com.konloch.av.gui.js.webserver.api.ScannedFile;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**

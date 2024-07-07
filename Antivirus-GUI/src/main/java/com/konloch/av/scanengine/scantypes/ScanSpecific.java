@@ -103,6 +103,8 @@ public class ScanSpecific extends Scan
 				if((malwareType = Antivirus.AV.detectAsMalware(scanFile)) != null)
 				{
 					boolean detected = false;
+					
+					//extract file from malware type
 					for(String fileLine : malwareType.split("\\r?\\n"))
 					{
 						if(fileLine.contains(" "))
@@ -112,8 +114,8 @@ public class ScanSpecific extends Scan
 							
 							if(selectedFile.exists())
 							{
-								//TODO extract file from malware type
-								detectedFiles.add(new ScannedFile(selectedFile.getName(), "Detected...", selectedFile));
+								Antivirus.AV.quarantine.quarantineFile(selectedFile, detectionInfo[0]);
+								detectedFiles.add(new ScannedFile(selectedFile.getName(), selectedFile.getAbsolutePath(), "Detected...", selectedFile));
 								detected = true;
 							}
 						}
@@ -122,7 +124,7 @@ public class ScanSpecific extends Scan
 					System.out.println("Detected: " + malwareType);
 					
 					if(!detected)
-						detectedFiles.add(new ScannedFile(scanFile.getName(), "Detected...", scanFile));
+						detectedFiles.add(new ScannedFile(scanFile.getName(), scanFile.getAbsolutePath(), "Detected...", scanFile));
 				}
 				
 				AVGUI.GUI.scanEngine.getLatestScan().finishedScans++;

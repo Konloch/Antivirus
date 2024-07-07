@@ -1,6 +1,7 @@
 package com.konloch.av.gui;
 
 import com.konloch.Antivirus;
+import com.konloch.av.gui.js.AVQuarantineGUI;
 import com.konloch.av.gui.js.AVScannerGUI;
 import com.konloch.av.gui.js.webserver.AVWebserver;
 import com.konloch.av.gui.settings.AVSettings;
@@ -27,6 +28,7 @@ public class AVGUI
 	public AVSettings avSettings;
 	public AVScannerGUI guiScanner;
 	public AVSettingsGUI guiSettings;
+	public AVQuarantineGUI guiQuarantine;
 	
 	public void initGUI()
 	{
@@ -41,6 +43,7 @@ public class AVGUI
 				avSettings = new AVSettings();
 				guiSettings = new AVSettingsGUI();
 				guiScanner = new AVScannerGUI();
+				guiQuarantine = new AVQuarantineGUI();
 				tray = new AVTray();
 				
 				//init settings

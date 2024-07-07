@@ -3,6 +3,7 @@ package com.konloch.av.database.sql;
 import com.konloch.Antivirus;
 import com.konloch.av.database.malware.FileSignature;
 import com.konloch.av.downloader.impl.yara.YaraDownloader;
+import com.konloch.av.quarantine.FileQuarantine;
 
 import java.io.File;
 import java.sql.*;
@@ -61,21 +62,33 @@ public class SQLiteDB
 					+ "    length INTEGER NOT NULL,\n"
 					+ "    identifier TEXT NOT NULL\n"
 					+ ");");
-		}
-		
-		try (Statement statement = connection.createStatement())
-		{
+			
 			statement.execute("CREATE TABLE IF NOT EXISTS config_integer (\n"
 					+ "    key TEXT PRIMARY KEY,\n"
 					+ "    value INTEGER NOT NULL\n"
 					+ ");");
-		}
-		
-		try (Statement statement = connection.createStatement())
-		{
+			
 			statement.execute("CREATE TABLE IF NOT EXISTS config_text (\n"
 					+ "    key TEXT PRIMARY KEY,\n"
 					+ "    value TEXT NOT NULL\n"
+					+ ");");
+			
+			//statement.execute("DROP TABLE quarantine");
+			
+			statement.execute("CREATE TABLE IF NOT EXISTS quarantine (\n"
+					+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+					+ "    path TEXT NOT NULL,\n"
+					+ "    name TEXT NOT NULL,\n"
+					+ "    reason TEXT NOT NULL,\n"
+					+ "    currentPath TEXT NOT NULL\n"
+					+ ");");
+			
+			statement.execute("CREATE TABLE IF NOT EXISTS whitelist_path (\n"
+					+ "    path TEXT PRIMARY KEY\n"
+					+ ");");
+			
+			statement.execute("CREATE TABLE IF NOT EXISTS whitelist_hash (\n"
+					+ "    hash TEXT PRIMARY KEY\n"
 					+ ");");
 		}
 	}
@@ -218,6 +231,111 @@ public class SQLiteDB
 		}
 		
 		return fileSignatures;
+	}
+	
+	public void upsertFileQuarantine(FileQuarantine... fileQuarantines)
+	{
+		String query = "INSERT OR REPLACE INTO quarantine (id, path, name, reason, currentPath) VALUES (?, ?, ?, ?, ?)";
+		
+		try (PreparedStatement pstmt = connection.prepareStatement(query))
+		{
+			connection.setAutoCommit(false);
+			
+			
+			for (FileQuarantine fileQuarantine : fileQuarantines)
+			{
+				pstmt.setInt(1, fileQuarantine.id);
+				pstmt.setString(2, fileQuarantine.path);
+				pstmt.setString(3, fileQuarantine.name);
+				pstmt.setString(4, fileQuarantine.reason);
+				pstmt.setString(5, fileQuarantine.currentPath);
+				pstmt.addBatch();
+			}
+			
+			pstmt.executeBatch();
+			connection.commit();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			
+			try
+			{
+				//roll back transaction on error
+				connection.rollback();
+			}
+			catch (SQLException rollbackEx)
+			{
+				rollbackEx.printStackTrace();
+			}
+		}
+		finally
+		{
+			try
+			{
+				connection.setAutoCommit(true);
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public List<FileQuarantine> loadQuarantinedFiles()
+	{
+		List<FileQuarantine> fileQuarantines = new ArrayList<>();
+		
+		String query = "SELECT id, path, name, reason, currentPath FROM quarantine";
+		
+		try (PreparedStatement pstmt = connection.prepareStatement(query))
+		{
+			try (ResultSet rs = pstmt.executeQuery())
+			{
+				while (rs.next())
+				{
+					int id = rs.getInt("id");
+					String path = rs.getString("path");
+					String name = rs.getString("name");
+					String reason = rs.getString("reason");
+					String currentPath = rs.getString("currentPath");
+					FileQuarantine fileQuarantine = new FileQuarantine(id, path, name, reason, currentPath);
+					fileQuarantines.add(fileQuarantine);
+				}
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return fileQuarantines;
+	}
+	
+	public void removeFromQuarantine(int id)
+	{
+		String query = "DELETE FROM quarantine WHERE id = ?";
+		
+		try (PreparedStatement pstmt = connection.prepareStatement(query))
+		{
+			pstmt.setInt(1, id);
+			
+			pstmt.execute();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			
+			try
+			{
+				//roll back transaction on error
+				connection.rollback();
+			}
+			catch (SQLException rollbackEx)
+			{
+				rollbackEx.printStackTrace();
+			}
+		}
 	}
 	
 	public long countFileSignatures()

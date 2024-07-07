@@ -19,6 +19,7 @@ public class AVTray
 	public PopupMenu trayPopup;
 	public MenuItem settings;
 	public MenuItem scanner;
+	public MenuItem quarantine;
 	
 	public AVTray() throws AWTException, IOException
 	{
@@ -41,6 +42,14 @@ public class AVTray
 			AVGUI.GUI.guiSettings.requestFocus();
 		});
 		trayPopup.add(settings);
+		
+		quarantine = new MenuItem("Quarantine");
+		quarantine.addActionListener(e ->
+		{
+			AVGUI.GUI.guiQuarantine.setVisible(true);
+			AVGUI.GUI.guiQuarantine.requestFocus();
+		});
+		trayPopup.add(quarantine);
 		
 		MenuItem exitButton = new MenuItem("Exit");
 		exitButton.addActionListener(e -> System.exit(0));

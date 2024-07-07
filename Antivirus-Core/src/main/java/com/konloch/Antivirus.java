@@ -5,6 +5,7 @@ import com.konloch.av.database.malware.MalwareScanFile;
 import com.konloch.av.database.sql.SQLiteDB;
 import com.konloch.av.downloader.impl.yara.YaraDownloader;
 import com.konloch.av.mimicvm.MimicVM;
+import com.konloch.av.quarantine.AVQuarantine;
 import com.konloch.av.scanning.MalwareScanners;
 import com.konloch.av.tasks.UpdateTask;
 
@@ -21,9 +22,10 @@ public class Antivirus
 	public static Antivirus AV;
 	
 	public final File workingDirectory = getWorkingDirectory();
+	public final AVFlags flags = new AVFlags();
 	public final SQLiteDB sqLiteDB = new SQLiteDB();
 	public final MalwareScanners scanners = new MalwareScanners();
-	public final AVFlags flags = new AVFlags();
+	public final AVQuarantine quarantine = new AVQuarantine();
 	public final MimicVM mimicVM = new MimicVM();
 	
 	public void startup()
@@ -36,6 +38,9 @@ public class Antivirus
 			sqLiteDB.connect();
 			sqLiteDB.createNewTable();
 			sqLiteDB.createInitialSettings();
+			
+			//load the quarantine
+			quarantine.init();
 			
 			//start the update task
 			new Thread(new UpdateTask(), "Update-Task").start();

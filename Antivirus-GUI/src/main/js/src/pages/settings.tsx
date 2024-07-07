@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
-export default  function Settings() {
+export default function Settings() {
   const [settings, setSettings] = useState({})
   useEffect(() => {
     const fetchSettings = async () => {

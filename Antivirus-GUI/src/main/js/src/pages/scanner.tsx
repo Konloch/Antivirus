@@ -66,10 +66,10 @@ export default function Scanner() {
           <div className="flex flex-col items-start w-full gap-2 max-h-[200px] overflow-auto">
             {scannedFiles.map((file, index) => (
               <div key={index} className="flex items-center justify-between w-full">
-                <span>{file['name']} </span>
+                <span title={file['path']}>{file['name']}</span>
                 <span
                   className={`px-2 py-1 rounded-full text-xs ${
-                    file['status'] === "Quarantined" ? "bg-red-500 text-white" : "bg-green-500 text-white"
+                    file['status'] != "Quarantined" ? "bg-red-500 text-white" : "bg-green-500 text-white"
                   }`}
                 >
                   {file['status']}

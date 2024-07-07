@@ -1,12 +1,15 @@
 package com.konloch.av.gui.js.webserver;
 
 import com.google.gson.reflect.TypeToken;
+import com.konloch.Antivirus;
 import com.konloch.av.gui.AVGUI;
 import com.konloch.av.gui.js.webserver.api.ScanProgress;
 import com.konloch.av.gui.js.webserver.http.client.ClientBuffer;
 import com.konloch.av.gui.js.webserver.http.request.Request;
 import com.konloch.av.gui.js.webserver.http.request.RequestListener;
 import com.konloch.av.gui.settings.AVSettingsEntry;
+import com.konloch.av.quarantine.AVQuarantine;
+import com.konloch.av.quarantine.FileQuarantine;
 
 import javax.swing.event.ChangeEvent;
 import java.io.ByteArrayOutputStream;
@@ -67,6 +70,43 @@ public class AVRequestListener implements RequestListener
 				return "".getBytes(StandardCharsets.UTF_8);
 			}
 			
+			case "/api/quarantine":
+			{
+				String action = request.getPost().get("action");
+				int id;
+				
+				if(action != null)
+				{
+					System.out.println("ACT: " + action);
+					switch(action)
+					{
+						case "getFiles":
+							return AVWebserver.gson.toJson(Antivirus.AV.quarantine.quarantineList)
+									.getBytes(StandardCharsets.UTF_8);
+							
+						case "removeAllFiles":
+							Antivirus.AV.quarantine.removeAll();
+							break;
+							
+						case "removeFile":
+							id = Integer.parseInt(request.getPost().get("id"));
+							Antivirus.AV.quarantine.removeFile(id);
+							System.out.println("OK: " + id);
+							break;
+							
+						case "reportFalsePositive":
+							id = Integer.parseInt(request.getPost().get("id"));
+							
+							//TODO ask the user if they want to report it to github or just locally declare it a false positive
+							
+							Antivirus.AV.quarantine.markFalsePositive(id);
+							break;
+					}
+				}
+				
+				return "".getBytes(StandardCharsets.UTF_8);
+			}
+			
 			case "/api/scan/quick":
 			{
 				AVGUI.GUI.scanEngine.scanGUIStage = 1;
@@ -116,8 +156,8 @@ public class AVRequestListener implements RequestListener
 							AVGUI.GUI.scanEngine.getLatestScan().latestUpdate,
 							duration,
 							estimation);
-					String jsonString = AVWebserver.gson.toJson(progress);
-					return jsonString.getBytes(StandardCharsets.UTF_8);
+					return AVWebserver.gson.toJson(progress)
+							.getBytes(StandardCharsets.UTF_8);
 				}
 				else
 				{
