@@ -24,7 +24,7 @@ public class AVConstants
 	public static boolean DEV_MODE = false;
 	public static String TITLE = "Antivirus+";
 	
-	public static boolean STATIC_SCANNING = false;
+	public static boolean STATIC_SCANNING = true;
 	public static boolean DYNAMIC_SCANNING = true;
 	
 	public static boolean ENABLE_YARA_SCANNING = WindowsUtil.IS_WINDOWS;

@@ -99,8 +99,6 @@ public class ScanSpecific extends Scan
 					continue;
 				}
 				
-				System.out.println("Scanning: " + scanFile.getAbsolutePath());
-				
 				progress = (int) (((double) count++ / scanFiles.size()) * 100);
 				latestUpdate = "Current File: " + scanFile.getName();
 				

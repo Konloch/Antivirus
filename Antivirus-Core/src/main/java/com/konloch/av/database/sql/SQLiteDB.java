@@ -195,6 +195,7 @@ public class SQLiteDB
 		return fileSignatures;
 	}
 	
+	
 	public List<FileSignature> getByFileHash(String... fileHash)
 	{
 		List<FileSignature> fileSignatures = new ArrayList<>();
