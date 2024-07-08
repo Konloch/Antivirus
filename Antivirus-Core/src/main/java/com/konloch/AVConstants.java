@@ -24,7 +24,8 @@ public class AVConstants
 	public static boolean DEV_MODE = false;
 	public static String TITLE = "Antivirus+";
 	
-	//static & dynamic scanning is handled thru sqlite
+	//handled thru sqlite
+	public static boolean AUTOMATIC_DATABASE_IMPORTING;
 	public static boolean STATIC_SCANNING;
 	public static boolean DYNAMIC_SCANNING;
 	

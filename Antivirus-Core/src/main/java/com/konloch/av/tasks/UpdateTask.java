@@ -19,7 +19,7 @@ public class UpdateTask implements Runnable
 		{
 			try
 			{
-				if(Antivirus.AV.sqLiteDB.getBooleanConfig("antivirus.automatic.database.updates", true))
+				if(AVConstants.AUTOMATIC_DATABASE_IMPORTING)
 				{
 					for (Downloader downloader : AVConstants.DOWNLOADERS)
 					{
