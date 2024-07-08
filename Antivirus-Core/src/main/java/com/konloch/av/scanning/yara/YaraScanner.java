@@ -58,7 +58,7 @@ public class YaraScanner implements MalwareScanner
 			// an easy solution is once the yara file is compiled, read it for the hash, then before this runs, read to verify the checksum
 			if(AVConstants.ENABLE_YARA_COMPILING && yaracRuleFile.exists())
 			{
-				command.add("-c");
+				command.add("-C");
 				command.add(yaracRuleFile.getAbsolutePath());
 			}
 			else
