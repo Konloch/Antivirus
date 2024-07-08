@@ -24,6 +24,8 @@ public class SignatureScanner implements MalwareScanner
 		if(!AVConstants.ENABLE_SIGNATURE_SCANNING || !AVConstants.STATIC_SCANNING)
 			return null;
 		
+		//NOTE: recursive scanning is handled through the API that calls on this, - it's job is to pass directories down to here
+		//we don't need to go any further than just the first folder
 		List<FileSignature> fileSignatures;
 		if(file.getFile().isDirectory())
 		{
