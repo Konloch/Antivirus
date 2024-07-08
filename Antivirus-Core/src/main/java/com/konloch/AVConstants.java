@@ -24,6 +24,11 @@ public class AVConstants
 	public static boolean DEV_MODE = false;
 	public static String TITLE = "Antivirus+";
 	
+	//TODO until we can fully rule out false positives from yara scanning we can't have automatic quarantine
+	// maybe some kind of dual setting where this only activates if detection came from yara?
+	// + that way yara detections can be sorted, and checksum detections can be assumed malware
+	public static boolean QUARANTINE_WONT_REMOVE_UNTIL_APPROVED = true;
+	
 	//handled thru sqlite
 	public static boolean AUTOMATIC_DATABASE_IMPORTING;
 	public static boolean STATIC_SCANNING;

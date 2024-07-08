@@ -32,6 +32,8 @@ public class AVQuarantine
 			return null;
 		}
 		
+		//AVConstants.QUARANTINE_WONT_REMOVE_UNTIL_APPROVED
+		
 		//TODO move file & rename
 		FileQuarantine quarantine = new FileQuarantine(quarantineList.size(), file.getAbsolutePath(), file.getName(), reason, file.getAbsolutePath());
 	
