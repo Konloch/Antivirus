@@ -9,6 +9,7 @@ import com.konloch.av.utils.WindowsUtil;
 import com.konloch.disklib.DiskReader;
 import com.konloch.disklib.DiskWriter;
 import com.konloch.httprequest.HTTPRequest;
+import com.konloch.process.EasyProcess;
 import com.konloch.util.FastStringUtils;
 
 import java.io.*;
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static com.konloch.av.scanning.yara.YaraScanner.readInputStream;
 import static com.konloch.av.scanning.yara.YaraScanner.rulesWithErrors;
 
 /**
@@ -42,6 +42,9 @@ public class YaraDownloader implements Downloader
 	@Override
 	public DownloadState getState() throws IOException, SQLException
 	{
+		if(!AVConstants.ENABLE_YARA_DEPENDENCIES_IMPORT)
+			return DownloadState.NONE;
+		
 		//every 7 days check for a new version release
 		if (Antivirus.AV.sqLiteDB.getStringConfig("yara.tools.version").equals("") ||
 				System.currentTimeMillis() - Antivirus.AV.sqLiteDB.getLongConfig("yara.tools.age") >= 1000 * 60 * 60 * 24 * 7)
@@ -190,6 +193,9 @@ public class YaraDownloader implements Downloader
 	
 	public static void loadYaraFilesIntoSingleFile() throws IOException
 	{
+		if(!AVConstants.ENABLE_YARA_SCANNING || !AVConstants.DYNAMIC_SCANNING)
+			return;
+		
 		File yaraLocalRules = new File(Antivirus.AV.workingDirectory, "yara");
 		File yaraLocalFile = new File(Antivirus.AV.workingDirectory, "yara-rules.yar");
 		
@@ -307,27 +313,25 @@ public class YaraDownloader implements Downloader
 			//create process builder
 			ProcessBuilder pb = new ProcessBuilder(command);
 			pb.directory(Antivirus.AV.workingDirectory);
-			Process process = pb.start();
+			EasyProcess process = EasyProcess.from(pb);
 			
 			//wait for the process to complete
 			int exitCode = process.waitFor();
 			//System.out.println("\t+ yara.exe exited with code: " + exitCode);
 			
 			//read the results
-			ArrayList<String> results = readInputStream(process.getInputStream());
-			if(!results.isEmpty())
+			if(!process.out.isEmpty())
 			{
 				StringBuilder sb = new StringBuilder();
-				for (String s : results)
+				for (String s : process.out)
 					sb.append(s).append("\n");
 				
 				String out = sb.toString();
 				System.out.println(out);
 			}
 			
-			//read the errors
-			ArrayList<String> err = readInputStream(process.getErrorStream());
-			for(String errorMessage : err)
+			//read the errors (resolve compile-time errors)
+			for(String errorMessage : process.err)
 			{
 				if(errorMessage.startsWith("error:"))
 				{

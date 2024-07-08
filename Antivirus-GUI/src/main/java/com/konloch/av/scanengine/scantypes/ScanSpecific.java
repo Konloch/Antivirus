@@ -31,7 +31,7 @@ public class ScanSpecific extends Scan
 		boolean preformScan;
 		ArrayList<File> scanFiles = new ArrayList<>();
 		
-		//TODO prompt for the file / dir to scan, then preform the scan
+		//prompt for the file / dir to scan, then preform the scan
 		if(!AVGUI.GUI.scanEngine.dontPromptForNextScan)
 		{
 			latestUpdate = "Waiting for user to select file";
@@ -81,7 +81,6 @@ public class ScanSpecific extends Scan
 			
 			AVGUI.GUI.scanEngine.selectedFilesForNextScan.clear();
 			
-			//TODO
 			preformScan = true;
 		}
 		
@@ -157,7 +156,6 @@ public class ScanSpecific extends Scan
 					@Override
 					public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
 					{
-						//scanFiles.add(file.toFile());
 						return FileVisitResult.CONTINUE;
 					}
 					

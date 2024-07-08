@@ -24,17 +24,21 @@ public class AVConstants
 	public static boolean DEV_MODE = false;
 	public static String TITLE = "Antivirus+";
 	
-	public static boolean STATIC_SCANNING = true;
-	public static boolean DYNAMIC_SCANNING = true;
+	//static & dynamic scanning is handled thru sqlite
+	public static boolean STATIC_SCANNING;
+	public static boolean DYNAMIC_SCANNING;
 	
+	//software capability flags
 	public static boolean ENABLE_YARA_SCANNING = WindowsUtil.IS_WINDOWS;
 	public static boolean ENABLE_YARA_COMPILING = WindowsUtil.IS_WINDOWS; //TODO this can be a security concern
 	public static boolean ENABLE_YARA_DATABASE_IMPORT = WindowsUtil.IS_WINDOWS;
-	public static boolean ENABLE_SIGNATURE_SCANNING_DATABASES_IMPORT = true;
+	public static boolean ENABLE_YARA_DEPENDENCIES_IMPORT = WindowsUtil.IS_WINDOWS;
+	public static boolean ENABLE_SIGNATURE_SCANNING_DATABASES_IMPORT = true; //TODO due to the database size this can take up to an hour
 	public static boolean ENABLE_SIGNATURE_SCANNING = true;
 	public static boolean ENABLE_REALTIME_FILE_PROTECTION = false;
 	public static boolean ENABLE_REALTIME_FILE_SCANNING = false;
 	public static boolean ENABLE_REALTIME_PROCESS_SCANNING = false;
+	public static boolean ENABLE_VM_MIMIC = WindowsUtil.IS_WINDOWS;
 	
 	public static final String SIGNATURE_IDENTIFIER_VIRUSSHARE_SUBMISSION = "2";
 	public static final String SIGNATURE_IDENTIFIER_MALWAREBAZAAR_SUBMISSION = "3";

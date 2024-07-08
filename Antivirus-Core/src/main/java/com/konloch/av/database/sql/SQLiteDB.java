@@ -96,6 +96,8 @@ public class SQLiteDB
 	public void createInitialSettings() throws SQLException
 	{
 		//turn everything on by default
+		getBooleanConfig("antivirus.static.file.scanning", true);
+		getBooleanConfig("antivirus.dynamic.file.scanning", true);
 		getBooleanConfig("antivirus.automatic.database.updates", true);
 		getBooleanConfig("antivirus.vm.mimic", true);
 		getBooleanConfig("antivirus.realtime.file.protection", true);

@@ -6,6 +6,7 @@ import com.konloch.av.database.malware.MalwareScanFile;
 import com.konloch.av.downloader.impl.yara.YaraDownloader;
 import com.konloch.av.scanning.MalwareScanner;
 import com.konloch.av.utils.WindowsUtil;
+import com.konloch.process.EasyProcess;
 import com.konloch.util.FastStringUtils;
 
 import java.io.*;
@@ -69,26 +70,24 @@ public class YaraScanner implements MalwareScanner
 			//create process builder
 			ProcessBuilder pb = new ProcessBuilder(command);
 			pb.directory(Antivirus.AV.workingDirectory);
-			Process process = pb.start();
+			EasyProcess process = EasyProcess.from(pb);
 			
 			//wait for the process to complete
 			int exitCode = process.waitFor();
 			//System.out.println("\t+ yara.exe exited with code: " + exitCode);
 			
 			//read the results
-			ArrayList<String> results = readInputStream(process.getInputStream());
-			if(!results.isEmpty())
+			if(!process.out.isEmpty())
 			{
 				StringBuilder sb = new StringBuilder();
-				for (String s : results)
+				for (String s : process.out)
 					sb.append(s).append("\n");
 				
 				return sb.toString();
 			}
 			
-			//read the errors
-			ArrayList<String> err = readInputStream(process.getErrorStream());
-			for(String errorMessage : err)
+			//read the errors (resolve runtime errors)
+			for(String errorMessage : process.err)
 			{
 				if(errorMessage.startsWith("error:"))
 				{
@@ -121,19 +120,5 @@ public class YaraScanner implements MalwareScanner
 		}
 		
 		return null;
-	}
-	
-	public static ArrayList<String> readInputStream(InputStream inputStream) throws IOException
-	{
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-		ArrayList<String> lines = new ArrayList<>();
-		
-		String line;
-		while ((line = reader.readLine()) != null)
-			lines.add(line);
-		
-		reader.close();
-		
-		return lines;
 	}
 }

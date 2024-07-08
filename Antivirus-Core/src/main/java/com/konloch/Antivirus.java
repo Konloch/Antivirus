@@ -56,8 +56,11 @@ public class Antivirus
 		//start vm mimic
 		try
 		{
-			if (sqLiteDB.getBooleanConfig("antivirus.vm.mimic", true))
+			if (AVConstants.ENABLE_VM_MIMIC && sqLiteDB.getBooleanConfig("antivirus.vm.mimic", true))
 				mimicVM.enable();
+			
+			AVConstants.STATIC_SCANNING = sqLiteDB.getBooleanConfig("antivirus.static.file.scanning", true);
+			AVConstants.DYNAMIC_SCANNING = sqLiteDB.getBooleanConfig("antivirus.dynamic.file.scanning", true);
 		}
 		catch (Exception e)
 		{
