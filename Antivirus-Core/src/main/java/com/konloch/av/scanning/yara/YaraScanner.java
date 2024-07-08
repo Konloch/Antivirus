@@ -1,5 +1,6 @@
 package com.konloch.av.scanning.yara;
 
+import com.konloch.AVConstants;
 import com.konloch.Antivirus;
 import com.konloch.av.database.malware.MalwareScanFile;
 import com.konloch.av.downloader.impl.yara.YaraDownloader;
@@ -23,6 +24,9 @@ public class YaraScanner implements MalwareScanner
 	@Override
 	public String detectAsMalware(MalwareScanFile file)
 	{
+		if(!AVConstants.ENABLE_YARA_SCANNING || !AVConstants.DYNAMIC_SCANNING)
+			return null;
+		
 		String architecture = System.getProperty("os.arch");
 		String arch;
 		
@@ -39,6 +43,7 @@ public class YaraScanner implements MalwareScanner
 		//TODO ideally we would compile the yara files and reuse them each scan
 		File yaraLocalFile = new File(Antivirus.AV.workingDirectory, "yara" + arch + ".exe");
 		File yaraRuleFile = new File(Antivirus.AV.workingDirectory, "yara-rules.yar");
+		File yaracRuleFile = new File(Antivirus.AV.workingDirectory, "yara-rules.yarc");
 		
 		if(!yaraLocalFile.exists())
 			throw new RuntimeException("File not found: " + yaraLocalFile.getAbsolutePath());
@@ -48,7 +53,17 @@ public class YaraScanner implements MalwareScanner
 			//setup commands
 			List<String> command = new ArrayList<>();
 			command.add(yaraLocalFile.getAbsolutePath());
-			command.add(yaraRuleFile.getAbsolutePath());
+			
+			//TODO some kind of verification would be smart so they can't just RCE the compiled yara file
+			// an easy solution is once the yara file is compiled, read it for the hash, then before this runs, read to verify the checksum
+			if(AVConstants.ENABLE_YARA_COMPILING && yaracRuleFile.exists())
+			{
+				command.add("-c");
+				command.add(yaracRuleFile.getAbsolutePath());
+			}
+			else
+				command.add(yaraRuleFile.getAbsolutePath());
+			
 			command.add(file.getFile().getAbsolutePath());
 			
 			//create process builder

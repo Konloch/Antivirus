@@ -9,6 +9,7 @@ import com.konloch.av.downloader.impl.yara.rules.DefenderYaraDownloader;
 import com.konloch.av.downloader.impl.yara.rules.Neo23x0Downloader;
 import com.konloch.av.downloader.impl.yara.rules.ReversingLabsDownloader;
 import com.konloch.av.downloader.impl.yara.rules.YaraHubDownloader;
+import com.konloch.av.utils.WindowsUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,8 +24,14 @@ public class AVConstants
 	public static boolean DEV_MODE = false;
 	public static String TITLE = "Antivirus+";
 	
-	public static boolean ENABLE_SIGNATURE_SCANNING_DATABASES_IMPORT = false;
-	public static boolean ENABLE_SIGNATURE_SCANNING = false;
+	public static boolean STATIC_SCANNING = false;
+	public static boolean DYNAMIC_SCANNING = true;
+	
+	public static boolean ENABLE_YARA_SCANNING = WindowsUtil.IS_WINDOWS;
+	public static boolean ENABLE_YARA_COMPILING = WindowsUtil.IS_WINDOWS; //TODO this can be a security concern
+	public static boolean ENABLE_YARA_DATABASE_IMPORT = WindowsUtil.IS_WINDOWS;
+	public static boolean ENABLE_SIGNATURE_SCANNING_DATABASES_IMPORT = true;
+	public static boolean ENABLE_SIGNATURE_SCANNING = true;
 	public static boolean ENABLE_REALTIME_FILE_PROTECTION = false;
 	public static boolean ENABLE_REALTIME_FILE_SCANNING = false;
 	public static boolean ENABLE_REALTIME_PROCESS_SCANNING = false;

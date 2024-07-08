@@ -1,5 +1,6 @@
 package com.konloch.av.downloader.impl.yara.rules;
 
+import com.konloch.AVConstants;
 import com.konloch.Antivirus;
 import com.konloch.av.downloader.DownloadState;
 
@@ -24,6 +25,9 @@ public class ReversingLabsDownloader extends YaraHubDownloader
 	@Override
 	public DownloadState getState() throws IOException, SQLException
 	{
+		if(!AVConstants.ENABLE_YARA_DATABASE_IMPORT)
+			return DownloadState.NONE;
+		
 		//every 7 days preform the daily update
 		if (System.currentTimeMillis() - Antivirus.AV.sqLiteDB.getLongConfig("reversinglabs.database.age") >= 1000 * 60 * 60 * 24 * 7)
 			return DownloadState.DAILY;

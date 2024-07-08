@@ -62,8 +62,6 @@ public class VirusShareDownloader implements Downloader
 			}
 			catch (FileNotFoundException e)
 			{
-				if(downloadIndex > 0)
-					Antivirus.AV.sqLiteDB.upsertIntegerConfig("virusshare.database.last.full.download", (downloadIndex - 1));
 				break;
 			}
 			catch (Exception e)
@@ -72,6 +70,9 @@ public class VirusShareDownloader implements Downloader
 				break;
 			}
 		}
+		
+		if(downloadIndex > 0)
+			Antivirus.AV.sqLiteDB.upsertIntegerConfig("virusshare.database.last.full.download", (downloadIndex - 1));
 		
 		//delete
 		new File(Antivirus.AV.workingDirectory, "vshare").delete();

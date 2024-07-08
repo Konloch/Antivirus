@@ -1,5 +1,6 @@
 package com.konloch.av.downloader.impl.yara;
 
+import com.konloch.AVConstants;
 import com.konloch.Antivirus;
 import com.konloch.av.downloader.DownloadState;
 import com.konloch.av.downloader.Downloader;
@@ -15,8 +16,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static com.konloch.av.scanning.yara.YaraScanner.readInputStream;
+import static com.konloch.av.scanning.yara.YaraScanner.rulesWithErrors;
 
 /**
  * @author Konloch
@@ -202,6 +207,10 @@ public class YaraDownloader implements Downloader
 		
 		//reset the buffer
 		sb = new StringBuilder();
+		
+		//compile yara local file
+		if(AVConstants.ENABLE_YARA_COMPILING)
+			compileYaraFile(yaraLocalFile);
 	}
 	
 	private static void loadYaraRulesFromDirectory(File yaraLocalFile, File directory) throws IOException
@@ -244,7 +253,7 @@ public class YaraDownloader implements Downloader
 				
 				rule = rule.trim();
 				
-				if(YaraScanner.rulesWithErrors.contains(rule))
+				if(rulesWithErrors.contains(rule))
 					writeRule[0] = false;
 			}
 		});
@@ -264,6 +273,91 @@ public class YaraDownloader implements Downloader
 		{
 			DiskWriter.append(yaraLocalFile, sb.toString());
 			sb = new StringBuilder();
+		}
+	}
+	
+	private static void compileYaraFile(File yaraLocalFile)
+	{
+		String architecture = System.getProperty("os.arch");
+		String arch;
+		
+		if(!WindowsUtil.IS_WINDOWS)
+			throw new RuntimeException("This is currently windows only - YaraX might be a solution, open a ticket and let us know you need it.");
+		
+		if (architecture.equals("x86") || architecture.equals("i386") || architecture.equals("i686"))
+			arch = "32";
+		else if (architecture.equals("amd64") || architecture.equals("x86_64"))
+			arch = "64";
+		else
+			throw new RuntimeException("Only 32bit & 64bit are supported, cannot support: " + architecture);
+		
+		//TODO ideally we would compile the yara files and reuse them each scan
+		File yaracLocalFile = new File(Antivirus.AV.workingDirectory, "yarac" + arch + ".exe");
+		
+		if(!yaracLocalFile.exists())
+			throw new RuntimeException("File not found: " + yaracLocalFile.getAbsolutePath());
+		try
+		{
+			//setup commands
+			List<String> command = new ArrayList<>();
+			command.add(yaracLocalFile.getAbsolutePath());
+			command.add(yaraLocalFile.getAbsolutePath());
+			command.add(new File(yaraLocalFile.getAbsolutePath() + "c").getAbsolutePath());
+			
+			//create process builder
+			ProcessBuilder pb = new ProcessBuilder(command);
+			pb.directory(Antivirus.AV.workingDirectory);
+			Process process = pb.start();
+			
+			//wait for the process to complete
+			int exitCode = process.waitFor();
+			//System.out.println("\t+ yara.exe exited with code: " + exitCode);
+			
+			//read the results
+			ArrayList<String> results = readInputStream(process.getInputStream());
+			if(!results.isEmpty())
+			{
+				StringBuilder sb = new StringBuilder();
+				for (String s : results)
+					sb.append(s).append("\n");
+				
+				String out = sb.toString();
+				System.out.println(out);
+			}
+			
+			//read the errors
+			ArrayList<String> err = readInputStream(process.getErrorStream());
+			for(String errorMessage : err)
+			{
+				if(errorMessage.startsWith("error:"))
+				{
+					//System.out.println(errorMessage);
+					
+					if(errorMessage.contains("in "))
+					{
+						String rule = FastStringUtils.split(errorMessage, "\"")[1].trim();
+						String reason = FastStringUtils.split(errorMessage, "):")[1].trim();
+						
+						System.out.println("Skipping rule: '" + rule + "', reason: '" + reason + "'");
+						
+						//add rule to known "skip" rules list
+						rulesWithErrors.add(rule);
+						
+						//rebuild the yara mega-rules
+						YaraDownloader.loadYaraFilesIntoSingleFile();
+						
+						//retry...
+						compileYaraFile(yaracLocalFile);
+						return;
+					}
+				}
+				
+				//ignore warnings
+			}
+		}
+		catch (IOException | InterruptedException e)
+		{
+			e.printStackTrace();
 		}
 	}
 }

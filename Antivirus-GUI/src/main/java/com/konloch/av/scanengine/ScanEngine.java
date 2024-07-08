@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class ScanEngine
 {
-	public boolean ignoreNextScan;
+	public boolean dontPromptForNextScan;
 	public int scanGUIStage = 0;
 	public final List<File> selectedFilesForNextScan = new ArrayList<>();
 	private Scan activeScan;
@@ -27,9 +27,12 @@ public class ScanEngine
 			{
 				Thread.sleep(1);
 				
-				if (Antivirus.AV.flags.updateFinished && activeScan != null)
+				if (activeScan != null)
 				{
-					activeScan.preformScan(this);
+					if(Antivirus.AV.flags.updateFinished)
+						activeScan.preformScan(this);
+					else
+						activeScan.latestUpdate = "Waiting for database update to finish...";
 				}
 			}
 			catch (Exception e)

@@ -32,7 +32,7 @@ public class ScanSpecific extends Scan
 		ArrayList<File> scanFiles = new ArrayList<>();
 		
 		//TODO prompt for the file / dir to scan, then preform the scan
-		if(!AVGUI.GUI.scanEngine.ignoreNextScan)
+		if(!AVGUI.GUI.scanEngine.dontPromptForNextScan)
 		{
 			latestUpdate = "Waiting for user to select file";
 			JFileChooser fileChooser = new JFileChooser();
@@ -67,7 +67,7 @@ public class ScanSpecific extends Scan
 		}
 		else
 		{
-			AVGUI.GUI.scanEngine.ignoreNextScan = false;
+			AVGUI.GUI.scanEngine.dontPromptForNextScan = false;
 			
 			for(File selectedFile : AVGUI.GUI.scanEngine.selectedFilesForNextScan)
 			{
@@ -133,7 +133,6 @@ public class ScanSpecific extends Scan
 				
 				AVGUI.GUI.scanEngine.getLatestScan().finishedScans++;
 			}
-			
 			
 			AVGUI.GUI.scanEngine.getLatestScan().finishedScanAt = System.currentTimeMillis();
 			AVGUI.GUI.scanEngine.getLatestScan().scanFinished = true;

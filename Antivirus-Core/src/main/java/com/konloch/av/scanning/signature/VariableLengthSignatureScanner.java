@@ -19,7 +19,7 @@ public class VariableLengthSignatureScanner implements MalwareScanner
 	@Override
 	public String detectAsMalware(MalwareScanFile file)
 	{
-		if(!AVConstants.ENABLE_SIGNATURE_SCANNING)
+		if(!AVConstants.ENABLE_SIGNATURE_SCANNING || !AVConstants.STATIC_SCANNING)
 			return null;
 		
 		List<FileSignature> fileSignatures = Antivirus.AV.sqLiteDB.getByFileHash(file.getMD5Hash(),

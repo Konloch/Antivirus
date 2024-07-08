@@ -88,14 +88,16 @@ public class AVGUI
 			GUI.initGUI();
 		}
 		
+		//show GUI
+		if(!CLI)
+			AVGUI.GUI.guiScanner.setVisible(true);
+		
 		//run AV engine
 		Antivirus.AV.run();
 		
 		//preform scan on CLI or show GUI
 		if(CLI)
 			Antivirus.AV.scan(args);
-		else
-			AVGUI.GUI.guiScanner.setVisible(true);
 		
 		//print the db stats
 		Antivirus.AV.sqLiteDB.printDatabaseStatistics();

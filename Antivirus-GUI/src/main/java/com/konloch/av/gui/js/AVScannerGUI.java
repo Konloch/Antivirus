@@ -98,7 +98,7 @@ public class AVScannerGUI extends JFrame
 		
 		if(success)
 		{
-			AVGUI.GUI.scanEngine.ignoreNextScan = true;
+			AVGUI.GUI.scanEngine.dontPromptForNextScan = true;
 			boolean stageTwo = AVGUI.GUI.scanEngine.scanGUIStage == 1;
 			
 			if(stageTwo) //press back on scanner stage 2

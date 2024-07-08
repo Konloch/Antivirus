@@ -1,5 +1,6 @@
 package com.konloch.av.downloader.impl.yara.rules;
 
+import com.konloch.AVConstants;
 import com.konloch.Antivirus;
 import com.konloch.av.downloader.DownloadState;
 
@@ -24,6 +25,9 @@ public class DefenderYaraDownloader extends YaraHubDownloader
 	@Override
 	public DownloadState getState() throws IOException, SQLException
 	{
+		if(!AVConstants.ENABLE_YARA_DATABASE_IMPORT)
+			return DownloadState.NONE;
+		
 		//TODO disabled due to scan speed
 		
 		//every week preform the daily update
