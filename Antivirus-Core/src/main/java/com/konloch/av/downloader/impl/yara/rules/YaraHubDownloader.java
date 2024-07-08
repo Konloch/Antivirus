@@ -33,9 +33,11 @@ public class YaraHubDownloader implements Downloader
 		if(!AVConstants.ENABLE_YARA_DATABASE_IMPORT)
 			return DownloadState.NONE;
 		
+		//TODO disabled due to false positives (the errant files can be manually removed by using a blacklist)
+		
 		//every 4 hours preform the daily update
-		if (System.currentTimeMillis() - Antivirus.AV.sqLiteDB.getLongConfig("yarahub.database.age") >= 1000 * 60 * 60 * 4)
-			return DownloadState.DAILY;
+		//if (System.currentTimeMillis() - Antivirus.AV.sqLiteDB.getLongConfig("yarahub.database.age") >= 1000 * 60 * 60 * 4)
+		//	return DownloadState.DAILY;
 		
 		return DownloadState.NONE;
 	}
