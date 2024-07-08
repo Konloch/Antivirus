@@ -10,14 +10,10 @@ import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.web.WebView;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -44,7 +40,7 @@ public class AVQuarantineGUI extends JFrame
 			webView.getEngine().setJavaScriptEnabled(true);
 			webView.setContextMenuEnabled(false);
 			
-			DisableJavaFXWebViewSelection disableJavaFXWebViewSelection = new DisableJavaFXWebViewSelection(webView.getEventDispatcher());
+			DisableJavaFXWebViewSelection disableJavaFXWebViewSelection = new DisableJavaFXWebViewSelection(jfxPanel, webView.getEventDispatcher());
 			webView.getEngine().getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) ->
 			{
 				if(newValue.equals(Worker.State.SUCCEEDED))

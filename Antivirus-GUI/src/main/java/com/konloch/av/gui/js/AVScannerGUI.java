@@ -44,7 +44,7 @@ public class AVScannerGUI extends JFrame
 			webView.getEngine().setJavaScriptEnabled(true);
 			webView.setContextMenuEnabled(false);
 			
-			DisableJavaFXWebViewSelection disableJavaFXWebViewSelection = new DisableJavaFXWebViewSelection(webView.getEventDispatcher());
+			DisableJavaFXWebViewSelection disableJavaFXWebViewSelection = new DisableJavaFXWebViewSelection(jfxPanel, webView.getEventDispatcher());
 			webView.getEngine().getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) ->
 			{
 				if(newValue.equals(Worker.State.SUCCEEDED))

@@ -6,6 +6,8 @@ import javafx.event.EventDispatcher;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
+import javax.swing.*;
+
 /**
  * @author Konloch
  * @author https://stackoverflow.com/a/27042293
@@ -13,10 +15,12 @@ import javafx.scene.input.MouseEvent;
  */
 public class DisableJavaFXWebViewSelection implements EventDispatcher
 {
+	private final JComponent component;
 	private final EventDispatcher oldDispatcher;
 	
-	public DisableJavaFXWebViewSelection(EventDispatcher oldDispatcher)
+	public DisableJavaFXWebViewSelection(JComponent component, EventDispatcher oldDispatcher)
 	{
+		this.component = component;
 		this.oldDispatcher = oldDispatcher;
 	}
 	
@@ -29,7 +33,11 @@ public class DisableJavaFXWebViewSelection implements EventDispatcher
 			
 			//disable selection
 			if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED))
-				event.consume();
+			{
+				//TODO this needs to be able to detect if it's on a webview scrollbar
+				if(m.getX() < component.getWidth()-10)
+					event.consume();
+			}
 			
 			//disable double click selection
 			if(m.getClickCount() > 1)
