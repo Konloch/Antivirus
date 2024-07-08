@@ -46,10 +46,10 @@ public class ScanSpecific extends Scan
 				
 				for(File selectedFile : selectedFiles)
 				{
-					scanFiles.add(selectedFile);
-					
 					if(!selectedFile.exists())
 						continue;
+					
+					scanFiles.add(selectedFile);
 					
 					walk(scanFiles, selectedFile);
 					
@@ -71,6 +71,11 @@ public class ScanSpecific extends Scan
 			
 			for(File selectedFile : AVGUI.GUI.scanEngine.selectedFilesForNextScan)
 			{
+				if(!selectedFile.exists())
+					continue;
+				
+				scanFiles.add(selectedFile);
+				
 				walk(scanFiles, selectedFile);
 			}
 			
