@@ -18,6 +18,7 @@ public class AVWebserver
 	public static boolean FAILED_TO_BIND = true;
 	public static int PORT;
 	public static final String RANDOM_PATH_IDENTIFIER = "/" + generateRandomPath();
+	public static final String RANDOM_KEY = generateRandomPath();
 	
 	public static void bind()
 	{
