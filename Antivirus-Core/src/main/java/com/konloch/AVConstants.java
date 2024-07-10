@@ -49,15 +49,15 @@ public class AVConstants
 	public static final String SIGNATURE_IDENTIFIER_VIRUSSHARE_SUBMISSION = "2";
 	public static final String SIGNATURE_IDENTIFIER_MALWAREBAZAAR_SUBMISSION = "3";
 	
-	public static final ArrayList<Downloader> DOWNLOADERS = new ArrayList<>(Arrays.asList(
-			new VirusShareDownloader(),
-			new MalwareBazaarDownloader(),
-			new ClamAVDownloader(),
+	public static ArrayList<Downloader> DOWNLOADERS = new ArrayList<>(Arrays.asList(
+			new YaraDownloader(),
 			new DefenderYaraDownloader(),
 			new YaraHubDownloader(),
 			new ReversingLabsDownloader(),
 			new Neo23x0Downloader(),
-			new YaraDownloader()
+			new MalwareBazaarDownloader(),
+			new ClamAVDownloader(),
+			new VirusShareDownloader()
 	));
 	
 	public static String getVersion(String mavenVersion)
