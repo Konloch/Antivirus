@@ -21,7 +21,7 @@ import java.util.Objects;
  */
 public class FalsePositiveReportingUtil extends JFrame
 {
-	private JTextArea textArea;
+	private final JTextArea textArea;
 	
 	public FalsePositiveReportingUtil() throws IOException
 	{
