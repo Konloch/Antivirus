@@ -17,8 +17,13 @@ public abstract class AVEndPoint
 	{
 		Request request = clientBuffer.request;
 		
-		if(!request.getPost().get("key").equals(RANDOM_KEY))
+		String key = request.getGet().get("key");
+		
+		if(!RANDOM_KEY.equals(key))
+		{
+			System.out.println("Response rejected: " + request.getPath()  + " using key " + key);
 			return "".getBytes(StandardCharsets.UTF_8);
+		}
 		
 		return process(clientBuffer, request);
 	}

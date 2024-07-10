@@ -11,9 +11,9 @@ export default function Quarantine() {
     const fetchFiles = async () => {
       setLoading(true);
       try {
-        const response = await fetch('/api/quarantine', {
+        const response = await fetch(`/api/quarantine?key=${apiKey}`, {
           method: 'POST',
-          body: `action=getFiles&key=${apiKey}`,
+          body: `action=getFile`,
         });
         const data = await response.json();
         setFiles(data);
@@ -34,26 +34,26 @@ export default function Quarantine() {
 
 
     const handleFileRemove = (id) => {
-      fetch('/api/quarantine', {
+      fetch(`/api/quarantine?key=${apiKey}`, {
         method: 'POST',
-        body: `action=removeFile&id=${id}&key=${apiKey}`,
+        body: `action=removeFile&id=${id}`,
       })
       setFiles((prevFiles) => prevFiles.filter((file) => file['id'] !== id))
     }
 
     const handleReportFalsePositive = (id) => {
-      fetch('/api/quarantine', {
+      fetch(`/api/quarantine?key=${apiKey}`, {
         method: 'POST',
-        body: `action=reportFalsePositive&id=${id}&key=${apiKey}`,
+        body: `action=reportFalsePositive&id=${id}`,
       })
       // You can also update the UI to reflect the reported false positive
       // For example, you can add a "Reported" badge next to the file name
     }
 
     const handleRemoveAll = () => {
-      fetch('/api/quarantine', {
+      fetch(`/api/quarantine?key=${apiKey}`, {
         method: 'POST',
-        body: `action=removeAllFiles&key=${apiKey}`,
+        body: `action=removeAllFiles`,
       })
       setFiles([])
     }

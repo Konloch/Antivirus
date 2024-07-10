@@ -16,10 +16,7 @@ export default function Scanner() {
     let interval: NodeJS.Timeout;
     if (isScanning) {
       interval = setInterval(() => {
-        fetch("/api/scan/status", {
-            method: 'POST',
-            body: `key=${apiKey}`,
-        })
+        fetch(`/api/scan/status?key=${apiKey}`)
           .then((response) => response.json())
           .then((data) => {
             setScanProgress(data.progress)
@@ -33,18 +30,14 @@ export default function Scanner() {
     return () => clearInterval(interval)
   }, [isScanning])
   const handleScan = (type: string) => {
-  fetch(`/api/scan/${type}`, {
-      method: 'POST',
-      body: `key=${apiKey}`,
-    }).then(() => {
+    fetch(`/api/scan/${type}?key=${apiKey}`)
+    .then(() => {
       setIsScanning(true)
     })
   }
   const handleStopScan = () => {
-    fetch("/api/scan/stop", {
-      method: "POST",
-      body: `key=${apiKey}`,
-    }).then(() => {
+    fetch(`/api/scan/stop?key=${apiKey}`)
+    .then(() => {
       setIsScanning(false)
       setScanType(null)
       setScanProgress(0)

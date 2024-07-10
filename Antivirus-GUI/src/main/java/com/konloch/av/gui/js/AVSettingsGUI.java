@@ -33,7 +33,6 @@ public class AVSettingsGUI extends JFrame
 		Platform.runLater(() ->
 		{
 			WebView webView = new WebView();
-			System.out.println("KEY: " + AVWebserver.RANDOM_KEY);
 			webView.getEngine().load("http://localhost:" + AVWebserver.PORT + AVWebserver.RANDOM_PATH_IDENTIFIER + "/settings.html?key=" + AVWebserver.RANDOM_KEY);
 			jfxPanel.setScene(new Scene(webView));
 		});

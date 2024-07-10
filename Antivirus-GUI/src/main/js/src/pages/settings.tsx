@@ -9,10 +9,7 @@ export default function Settings() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await fetch("/api/settings/status?key=${apiKey}", {
-          method: 'POST',
-          body: `key=${apiKey}`,
-        });
+        const response = await fetch(`/api/settings/status?key=${apiKey}`);
         const data = await response.json()
         setSettings(data)
       } catch (error) {
@@ -26,9 +23,12 @@ export default function Settings() {
       ...prevSettings,
       [setting]: !prevSettings[setting],
     }))
-    fetch("/api/settings/change", {
+    fetch(`/api/settings/status?key=${apiKey}`, {
       method: "POST",
-      body: `key=${apiKey}&json=` + JSON.stringify({ [setting]: !settings[setting] }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ [setting]: !settings[setting] }),
     })
   }
   return (
