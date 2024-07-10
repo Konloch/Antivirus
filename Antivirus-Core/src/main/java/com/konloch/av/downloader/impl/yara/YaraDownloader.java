@@ -247,9 +247,10 @@ public class YaraDownloader implements Downloader
 		boolean[] writeRule = new boolean[]{true};
 		DiskReader.read(file).forEach(line ->
 		{
-			if(line.trim().startsWith("rule "))
+			String trimmedLine = line.trim();
+			if(trimmedLine.startsWith("rule "))
 			{
-				String rule = FastStringUtils.split(line, "rule ")[1].trim();
+				String rule = FastStringUtils.split(trimmedLine, "rule ")[1].trim();
 				
 				if(rule.contains(" "))
 					rule = FastStringUtils.split(rule, " ")[0].trim();
