@@ -37,14 +37,14 @@ public class SignatureScanner implements MalwareScanner
 				{
 					MalwareScanFile subScanFile = new MalwareScanFile(subFile);
 					fileSignatures.addAll(Antivirus.AV.sqLiteDB.getByFileHash(subScanFile.getMD5Hash(),
-							subScanFile.getSHA1Hash(), subScanFile.getSHA256Hash()));
+							subScanFile.getSHA1Hash(), subScanFile.getSHA256Hash(), subScanFile.getSHA512Hash()));
 				}
 			}
 		}
 		else
 		{
 			fileSignatures = Antivirus.AV.sqLiteDB.getByFileHash(file.getMD5Hash(),
-				file.getSHA1Hash(), file.getSHA256Hash());
+				file.getSHA1Hash(), file.getSHA256Hash(), file.getSHA512Hash());
 		}
 		
 		if(fileSignatures != null)
