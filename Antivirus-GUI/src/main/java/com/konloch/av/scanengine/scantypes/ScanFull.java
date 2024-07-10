@@ -18,7 +18,9 @@ public class ScanFull extends ScanSpecific
 		
 		latestUpdate = "Indexing files to be scanned...";
 		
+		//scan full
 		ArrayList<File> scanFiles = new ArrayList<>();
+		
 		for(File root : File.listRoots())
 		{
 			if(engine.getActiveScan() == null) //scan ended early
