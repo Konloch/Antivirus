@@ -107,7 +107,7 @@ public class AVScannerGUI extends JFrame
 								"var observer = new MutationObserver(function(mutations) {" +
 								"   mutations.forEach(function(mutation) {" +
 								"       if (mutation.type === 'childList') {" +
-								"           document.querySelector(\"#__next > div > div > button:nth-child(3)\").click();" +
+								"           document.querySelector(\"#__next > div > div > button:nth-child(5)\").click();" +
 								"           observer.disconnect();" +
 								"       }" +
 								"   });" +
@@ -117,7 +117,7 @@ public class AVScannerGUI extends JFrame
 			}
 			else //on scanner stage 1, press the 3rd option
 			{
-				webView.getEngine().executeScript("document.querySelector(\"#__next > div > div > button:nth-child(3)\").click();");
+				webView.getEngine().executeScript("document.querySelector(\"#__next > div > div > button:nth-child(5)\").click();");
 			}
 			
 			AVGUI.GUI.scanEngine.scanGUIStage = 1;
