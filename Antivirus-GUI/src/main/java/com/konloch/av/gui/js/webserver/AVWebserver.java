@@ -32,7 +32,7 @@ public class AVWebserver
 				
 				FAILED_TO_BIND = false;
 				
-				System.out.println("AVWebserver bound on http://localhost:" + webserver.getServer().getPort() + STATIC_CONTENT_KEY + "?key=" + DYNAMIC_API_KEY);
+				System.out.println("AVWebserver bound on http://localhost:" + webserver.getServer().getPort() + STATIC_CONTENT_KEY + "/scanner.html?key=" + DYNAMIC_API_KEY);
 				break;
 			}
 			catch (IOException e)
