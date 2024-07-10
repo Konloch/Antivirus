@@ -61,6 +61,24 @@
 
 ## More Media
 
+
 ![Screenshot-3](.github/screen-3.gif "Screenshot-3")
+
+Scanning GUI with Quarantine GUI
+
 ![Screenshot-4](.github/screen-4.gif "Screenshot-4")
+
+Scanning GUI
+
 ![Screenshot-5](.github/screen-5.png "Screenshot-5")
+
+Settings GUI
+
+![Screenshot-6](.github/screen-6.gif "Screenshot-6")
+
+Startup after fully installed
+
+![Screenshot-7](.github/screen-7.gif "Screenshot-7")
+
+Downloading dependencies announcements
+
