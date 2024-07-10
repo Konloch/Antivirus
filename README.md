@@ -45,7 +45,7 @@
   + Linux / Mac support works but has limited feature set
     + *Experimental VM Mimic is currently windows only*
 
-## Credits
+## Technology Credits
 + File Signature Scanning comes from [Traditional-Antivirus](https://github.com/Konloch/Traditional-Antivirus)
     + File signatures database come from [ClamAV's DB](https://github.com/Cisco-Talos/clamav), [Malware Bazaar](https://bazaar.abuse.ch/), [VirusShare](https://virusshare.com/)
 + Yara Scanning comes from [Yara-Antivirus](https://github.com/Konloch/Yara-Antivirus)
