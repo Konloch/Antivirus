@@ -19,14 +19,14 @@ public class AVSettings
 	
 	public void init() throws SQLException
 	{
+		addSettingEntry("Automatic Database Updating", "antivirus.automatic.database.updates",
+				(value) -> AVConstants.AUTOMATIC_DATABASE_IMPORTING = (boolean) value.getSource());
+		
 		addSettingEntry("Static File Scanning (Fast)", "antivirus.static.file.scanning",
 				(value) -> AVConstants.STATIC_SCANNING = (boolean) value.getSource());
 		
 		addSettingEntry("Dynamic File Scanning (Slow)", "antivirus.dynamic.file.scanning",
 				(value) -> AVConstants.DYNAMIC_SCANNING = (boolean) value.getSource());
-		
-		addSettingEntry("Automatic Database Updating", "antivirus.automatic.database.updates",
-				(value) -> AVConstants.AUTOMATIC_DATABASE_IMPORTING = (boolean) value.getSource());
 		
 		if (WindowsUtil.IS_WINDOWS)
 		{
