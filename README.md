@@ -82,3 +82,6 @@ Startup after fully installed
 
 Downloading dependencies announcements
 
+![Screenshot-8](.github/screen-8.png "Screenshot-8")
+
+Tray navigation
