@@ -25,7 +25,12 @@ public class AVSettings
 				(value) -> AVConstants.AUTOMATIC_DATABASE_IMPORTING = (boolean) value.getSource());
 		
 		addSettingEntry("Static File Scanning (Fast)", "antivirus.static.file.scanning",
-				(value) -> AVConstants.STATIC_SCANNING = (boolean) value.getSource());
+				(value) ->
+				{
+					AVConstants.STATIC_SCANNING = (boolean) value.getSource();
+					
+					Antivirus.AV.sqLiteDB.countDatabase();
+				});
 		
 		addSettingEntry("Dynamic File Scanning (Slow)", "antivirus.dynamic.file.scanning",
 				(value) ->

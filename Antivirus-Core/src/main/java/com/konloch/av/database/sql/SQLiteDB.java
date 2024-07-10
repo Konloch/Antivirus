@@ -1,5 +1,6 @@
 package com.konloch.av.database.sql;
 
+import com.konloch.AVConstants;
 import com.konloch.Antivirus;
 import com.konloch.av.database.malware.FileSignature;
 import com.konloch.av.downloader.impl.yara.YaraDownloader;
@@ -19,8 +20,8 @@ public class SQLiteDB
 {
 	private Connection connection;
 	private final ArrayList<FileSignature> signatureAddQueue = new ArrayList<>();
-	private String signatures;
-	private String rules;
+	public String signatures;
+	public String rules;
 	
 	public void connect() throws SQLException
 	{
@@ -488,7 +489,10 @@ public class SQLiteDB
 	
 	public void countDatabase()
 	{
-		signatures = NumberFormat.getInstance().format(Antivirus.AV.sqLiteDB.countFileSignatures());
+		signatures = AVConstants.STATIC_SCANNING
+				? NumberFormat.getInstance().format(Antivirus.AV.sqLiteDB.countFileSignatures())
+				: "0";
+		
 		rules = NumberFormat.getInstance().format(YaraDownloader.yaraRules);
 		
 		System.out.println("Counted " + signatures + " malware signatures & " + rules + " yara rules.");
