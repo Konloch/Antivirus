@@ -32,12 +32,10 @@ public class ScanFull extends ScanSpecific
 			walk(engine, scanFiles, root);
 		}
 		
-		latestUpdate = "Indexed " + scanFiles.size();
-		System.out.println("Indexed " + scanFiles.size());
-		
 		//scan full computer
 		scan(scanFiles);
 		
+		//signal engine finish
 		engine.finished();
 	}
 }
