@@ -2,9 +2,11 @@ package com.konloch.av.gui.settings;
 
 import com.konloch.AVConstants;
 import com.konloch.Antivirus;
+import com.konloch.av.downloader.impl.yara.YaraDownloader;
 import com.konloch.av.utils.WindowsUtil;
 
 import javax.swing.event.ChangeListener;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,7 +28,26 @@ public class AVSettings
 				(value) -> AVConstants.STATIC_SCANNING = (boolean) value.getSource());
 		
 		addSettingEntry("Dynamic File Scanning (Slow)", "antivirus.dynamic.file.scanning",
-				(value) -> AVConstants.DYNAMIC_SCANNING = (boolean) value.getSource());
+				(value) ->
+				{
+					AVConstants.DYNAMIC_SCANNING = (boolean) value.getSource();
+					
+					YaraDownloader.yaraRules = 0;
+					
+					if(AVConstants.DYNAMIC_SCANNING)
+					{
+						try
+						{
+							YaraDownloader.loadYaraFilesIntoSingleFile();
+						}
+						catch (IOException e)
+						{
+							e.printStackTrace();
+						}
+					}
+					
+					Antivirus.AV.sqLiteDB.updateRuleCount();
+				});
 		
 		if (WindowsUtil.IS_WINDOWS)
 		{

@@ -19,6 +19,8 @@ public class SQLiteDB
 {
 	private Connection connection;
 	private final ArrayList<FileSignature> signatureAddQueue = new ArrayList<>();
+	private String signatures;
+	private String rules;
 	
 	public void connect() throws SQLException
 	{
@@ -484,10 +486,19 @@ public class SQLiteDB
 		upsertStringConfig(key, String.valueOf(value));
 	}
 	
-	public void printDatabaseStatistics()
+	public void countDatabase()
 	{
-		String signatures = NumberFormat.getInstance().format(Antivirus.AV.sqLiteDB.countFileSignatures());
-		String rules = NumberFormat.getInstance().format(YaraDownloader.yaraRules);
+		signatures = NumberFormat.getInstance().format(Antivirus.AV.sqLiteDB.countFileSignatures());
+		rules = NumberFormat.getInstance().format(YaraDownloader.yaraRules);
+		
+		System.out.println("Counted " + signatures + " malware signatures & " + rules + " yara rules.");
+		
+		Antivirus.AV.softwareStatus.status = signatures + " File Signatures & " + rules + " Yara Rules";
+	}
+	
+	public void updateRuleCount()
+	{
+		rules = NumberFormat.getInstance().format(YaraDownloader.yaraRules);
 		
 		System.out.println("Counted " + signatures + " malware signatures & " + rules + " yara rules.");
 		

@@ -58,7 +58,7 @@ public class UpdateTask implements Runnable
 						announcedFullyDownloaded = true;
 						
 						//print the db stats
-						Antivirus.AV.sqLiteDB.printDatabaseStatistics();
+						Antivirus.AV.sqLiteDB.countDatabase();
 					}
 				}
 			}
