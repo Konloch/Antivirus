@@ -37,10 +37,12 @@
 
 ## Notes
 + Yara integration is powered by [Yara CLI](https://github.com/VirusTotal/yara)
-+ *Quarantine does not actually quarantine* - Until we can rule out false positives from the yara rules we probably won't have a realtime quarantine.
-  + Instead, we have a passive quarantine that requires the user to decide if they want to remove the files or not.
++ *Use in combination with Windows Defender or another trusted Antivirus*
++ *Quarantine does not actually quarantine* - Until we can rule out false positives from the yara rules we probably won't have a realtime quarantine
+  + Instead, we have a passive quarantine that requires the user to decide if they want to remove the files or not
 
 ## More Media
 
 ![Screenshot-3](.github/screen-3.gif "Screenshot-3")
 ![Screenshot-4](.github/screen-4.gif "Screenshot-4")
+![Screenshot-5](.github/screen-5.png "Screenshot-5")
