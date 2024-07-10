@@ -3,10 +3,7 @@ package com.konloch.av.gui.js.webserver;
 import com.konloch.av.gui.AVGUI;
 import com.konloch.av.gui.js.webserver.api.ScanProgress;
 import com.konloch.av.gui.js.webserver.endpoints.QuarantineEndPoint;
-import com.konloch.av.gui.js.webserver.endpoints.scan.ScanFullEndPoint;
-import com.konloch.av.gui.js.webserver.endpoints.scan.ScanQuickEndPoint;
-import com.konloch.av.gui.js.webserver.endpoints.scan.ScanStatusEndPoint;
-import com.konloch.av.gui.js.webserver.endpoints.scan.ScanStopEndPoint;
+import com.konloch.av.gui.js.webserver.endpoints.scan.*;
 import com.konloch.av.gui.js.webserver.endpoints.settings.SettingsChangeEndPoint;
 import com.konloch.av.gui.js.webserver.endpoints.settings.SettingsStatusEndPoint;
 import com.konloch.av.gui.js.webserver.http.client.ClientBuffer;
@@ -34,6 +31,7 @@ public class AVRequestListener implements RequestListener
 		endPoints.put("/api/quarantine", new QuarantineEndPoint());
 		endPoints.put("/api/scan/quick", new ScanQuickEndPoint());
 		endPoints.put("/api/scan/full", new ScanFullEndPoint());
+		endPoints.put("/api/scan/specific", new ScanSpecificEndPoint());
 		endPoints.put("/api/scan/stop", new ScanStopEndPoint());
 		endPoints.put("/api/scan/status", new ScanStatusEndPoint());
 	}
