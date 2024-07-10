@@ -76,6 +76,8 @@ public class SQLiteDB
 					+ "    value TEXT NOT NULL\n"
 					+ ");");
 			
+			//statement.execute("DROP TABLE quarantine");
+			
 			statement.execute("CREATE TABLE IF NOT EXISTS quarantine (\n"
 					+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 					+ "    path TEXT NOT NULL,\n"
@@ -210,7 +212,7 @@ public class SQLiteDB
 			if (i < fileHash.length - 1)
 				query.append(", ");
 		}
-		query.append(") AND NOT EXISTS (SELECT 1 FROM whitelist_hash wh WHERE wh.hash = s.hash)");
+		query.append(")");
 		
 		try (PreparedStatement pstmt = connection.prepareStatement(query.toString()))
 		{
@@ -224,6 +226,7 @@ public class SQLiteDB
 					String hash = rs.getString("hash");
 					int length = rs.getInt("length");
 					String identifier = rs.getString("identifier");
+					
 					FileSignature fileSignature = new FileSignature(hash, length, identifier);
 					fileSignatures.add(fileSignature);
 				}
@@ -348,36 +351,12 @@ public class SQLiteDB
 		
 		try (PreparedStatement pstmt = connection.prepareStatement(query))
 		{
-			connection.setAutoCommit(false);
 			pstmt.setString(1, fileSignature);
-			pstmt.addBatch();
-			pstmt.executeBatch();
-			connection.commit();
+			pstmt.execute();
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
-			
-			try
-			{
-				//roll back transaction on error
-				connection.rollback();
-			}
-			catch (SQLException rollbackEx)
-			{
-				rollbackEx.printStackTrace();
-			}
-		}
-		finally
-		{
-			try
-			{
-				connection.setAutoCommit(true);
-			}
-			catch (SQLException e)
-			{
-				e.printStackTrace();
-			}
 		}
 	}
 	
@@ -394,6 +373,9 @@ public class SQLiteDB
 		
 		try (PreparedStatement pstmt = connection.prepareStatement(query.toString()))
 		{
+			for (int i = 0; i < fileSignatures.length; i++)
+				pstmt.setString(i + 1, fileSignatures[i]);
+			
 			try (ResultSet rs = pstmt.executeQuery())
 			{
 				if (rs.next())

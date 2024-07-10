@@ -47,8 +47,10 @@ public class SignatureScanner implements MalwareScanner
 				file.getSHA1Hash(), file.getSHA256Hash(), file.getSHA512Hash());
 		}
 		
+		//something was detected
 		if(fileSignatures != null)
 		{
+			//figure out what was detected
 			for(FileSignature fileSignature : fileSignatures)
 			{
 				String detectionType = fileSignature.doesDetectAsMalwareType(file);
