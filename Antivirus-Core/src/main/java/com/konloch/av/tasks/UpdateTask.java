@@ -15,10 +15,14 @@ public class UpdateTask implements Runnable
 	@Override
 	public void run()
 	{
+		boolean fullyDownloaded = false;
+		boolean announcedFullyDownloaded = false;
+		
 		while(Antivirus.AV.flags.running)
 		{
 			try
 			{
+				boolean hasHadToDownload = false;
 				if(AVConstants.AUTOMATIC_DATABASE_IMPORTING)
 				{
 					for (Downloader downloader : AVConstants.DOWNLOADERS)
@@ -29,6 +33,8 @@ public class UpdateTask implements Runnable
 							
 							if (state != DownloadFrequency.NONE)
 							{
+								announcedFullyDownloaded = false; //reset the announcement on a download prompt
+								hasHadToDownload = true;
 								Antivirus.AV.softwareStatus.status = "Downloading " + downloader.getName();
 								downloader.download(state);
 							}
@@ -43,6 +49,17 @@ public class UpdateTask implements Runnable
 							Antivirus.AV.flags.updateFinished = true;
 						}
 					}
+					
+					if(!fullyDownloaded)
+						fullyDownloaded = !hasHadToDownload;
+					
+					if(fullyDownloaded && !announcedFullyDownloaded)
+					{
+						announcedFullyDownloaded = true;
+						
+						//print the db stats
+						Antivirus.AV.sqLiteDB.printDatabaseStatistics();
+					}
 				}
 			}
 			catch (Exception e)
@@ -54,7 +71,7 @@ public class UpdateTask implements Runnable
 				//wait a second
 				try
 				{
-					Thread.sleep(1000);
+					Thread.sleep(100);
 				}
 				catch (InterruptedException e)
 				{

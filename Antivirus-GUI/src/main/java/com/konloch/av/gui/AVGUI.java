@@ -98,9 +98,5 @@ public class AVGUI
 		//preform scan on CLI or show GUI
 		if(CLI)
 			Antivirus.AV.scan(args);
-		
-		//print the db stats
-		Antivirus.AV.sqLiteDB.printDatabaseStatistics();
-		
 	}
 }
