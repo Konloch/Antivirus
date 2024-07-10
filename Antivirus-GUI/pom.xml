@@ -48,6 +48,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.konloch</groupId>
+			<artifactId>FastStringUtils</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.konloch</groupId>
 			<artifactId>Antivirus-Core</artifactId>
 			<version>0.1.0</version>
 		</dependency>
@@ -55,11 +60,6 @@
 			<groupId>com.konloch</groupId>
 			<artifactId>Socket-Server</artifactId>
 			<version>0.9.4</version>
-		</dependency>
-		<dependency>
-			<groupId>com.konloch</groupId>
-			<artifactId>FastStringUtils</artifactId>
-			<version>1.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.konloch</groupId>
