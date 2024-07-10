@@ -1,6 +1,7 @@
 package com.konloch.av.quarantine;
 
 import com.konloch.Antivirus;
+import com.konloch.av.database.malware.MalwareScanFile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,9 +50,18 @@ public class AVQuarantine
 		//TODO move file back to where it came from
 		
 		Antivirus.AV.sqLiteDB.removeFromQuarantine(id);
-		quarantineList.removeIf(fQ -> fQ == null || fQ.id == id);
+		quarantineList.removeIf(fQ ->
+		{
+			boolean match = fQ == null || fQ.id == id;
+			
+			if(match && fQ != null)
+			{
+				MalwareScanFile file = new MalwareScanFile(new File(fQ.path));
+				Antivirus.AV.sqLiteDB.insertWhitelistFileSignature(file.getSHA512Hash());
+			}
+			return match;
+		});
 		
-		//TODO
 		return false;
 	}
 	

@@ -76,8 +76,6 @@ public class SQLiteDB
 					+ "    value TEXT NOT NULL\n"
 					+ ");");
 			
-			//statement.execute("DROP TABLE quarantine");
-			
 			statement.execute("CREATE TABLE IF NOT EXISTS quarantine (\n"
 					+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 					+ "    path TEXT NOT NULL,\n"
@@ -205,14 +203,14 @@ public class SQLiteDB
 	{
 		List<FileSignature> fileSignatures = new ArrayList<>();
 		
-		StringBuilder query = new StringBuilder("SELECT hash, length, identifier FROM signatures WHERE  hash IN (");
-		for (int i = 0; i < fileHash.length; i++) {
+		StringBuilder query = new StringBuilder("SELECT hash, length, identifier FROM signatures WHERE hash IN (");
+		for (int i = 0; i < fileHash.length; i++)
+		{
 			query.append("?");
-			if (i < fileHash.length - 1) {
+			if (i < fileHash.length - 1)
 				query.append(", ");
-			}
 		}
-		query.append(")");
+		query.append(") AND NOT EXISTS (SELECT 1 FROM whitelist_hash wh WHERE wh.hash = s.hash)");
 		
 		try (PreparedStatement pstmt = connection.prepareStatement(query.toString()))
 		{
@@ -342,6 +340,72 @@ public class SQLiteDB
 				rollbackEx.printStackTrace();
 			}
 		}
+	}
+	
+	public void insertWhitelistFileSignature(String fileSignature)
+	{
+		String query = "INSERT OR REPLACE INTO whitelist_hash (hash) VALUES (?)";
+		
+		try (PreparedStatement pstmt = connection.prepareStatement(query))
+		{
+			connection.setAutoCommit(false);
+			pstmt.setString(1, fileSignature);
+			pstmt.addBatch();
+			pstmt.executeBatch();
+			connection.commit();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			
+			try
+			{
+				//roll back transaction on error
+				connection.rollback();
+			}
+			catch (SQLException rollbackEx)
+			{
+				rollbackEx.printStackTrace();
+			}
+		}
+		finally
+		{
+			try
+			{
+				connection.setAutoCommit(true);
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public boolean isWhiteListed(String... fileSignatures)
+	{
+		StringBuilder query = new StringBuilder("SELECT COUNT(*) AS totalCount FROM whitelist_hash WHERE hash IN (");
+		for (int i = 0; i < fileSignatures.length; i++)
+		{
+			query.append("?");
+			if (i < fileSignatures.length - 1)
+				query.append(", ");
+		}
+		query.append(")");
+		
+		try (PreparedStatement pstmt = connection.prepareStatement(query.toString()))
+		{
+			try (ResultSet rs = pstmt.executeQuery())
+			{
+				if (rs.next())
+					return rs.getLong("totalCount") > 0;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return false;
 	}
 	
 	public long countFileSignatures()
