@@ -3,7 +3,7 @@ package com.konloch.av.downloader.impl.signatures;
 import com.konloch.AVConstants;
 import com.konloch.Antivirus;
 import com.konloch.av.database.malware.FileSignature;
-import com.konloch.av.downloader.DownloadState;
+import com.konloch.av.downloader.DownloadFrequency;
 import com.konloch.av.downloader.Downloader;
 
 import java.io.*;
@@ -22,23 +22,29 @@ import static com.konloch.AVConstants.SIGNATURE_IDENTIFIER_VIRUSSHARE_SUBMISSION
 public class VirusShareDownloader implements Downloader
 {
 	@Override
-	public void download(DownloadState state) throws IOException, SQLException
+	public String getName()
 	{
-		if(state == DownloadState.DAILY)
+		return "Virus Share (File Signatures)";
+	}
+	
+	@Override
+	public void download(DownloadFrequency state) throws IOException, SQLException
+	{
+		if(state == DownloadFrequency.DAILY)
 			downloadUpdate();
 	}
 	
 	@Override
-	public DownloadState getState() throws IOException, SQLException
+	public DownloadFrequency getState() throws IOException, SQLException
 	{
 		if(!AVConstants.ENABLE_SIGNATURE_SCANNING_DATABASES_IMPORT)
-			return DownloadState.NONE;
+			return DownloadFrequency.NONE;
 		
 		//every 14 days preform a download
 		if(System.currentTimeMillis() - Antivirus.AV.sqLiteDB.getLongConfig("virusshare.database.age")>= 1000 * 60 * 60 * 24 * 14)
-			return DownloadState.DAILY;
+			return DownloadFrequency.DAILY;
 		
-		return DownloadState.NONE;
+		return DownloadFrequency.NONE;
 	}
 	
 	private void downloadUpdate() throws SQLException

@@ -32,6 +32,7 @@ public class AVRequestListener implements RequestListener
 		endPoints.put("/api/scan/specific", new ScanSpecificEndPoint());
 		endPoints.put("/api/scan/stop", new ScanStopEndPoint());
 		endPoints.put("/api/scan/status", new ScanStatusEndPoint());
+		endPoints.put("/api/app/status", new SoftwareStatusEndPoint());
 	}
 	
 	@Override

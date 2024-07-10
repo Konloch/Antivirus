@@ -2,7 +2,7 @@ package com.konloch.av.tasks;
 
 import com.konloch.AVConstants;
 import com.konloch.Antivirus;
-import com.konloch.av.downloader.DownloadState;
+import com.konloch.av.downloader.DownloadFrequency;
 import com.konloch.av.downloader.Downloader;
 
 /**
@@ -25,10 +25,13 @@ public class UpdateTask implements Runnable
 					{
 						try
 						{
-							DownloadState state = downloader.getState();
+							DownloadFrequency state = downloader.getState();
 							
-							if (state != DownloadState.NONE)
+							if (state != DownloadFrequency.NONE)
+							{
+								Antivirus.AV.softwareStatus.status = "Downloading " + downloader.getName();
 								downloader.download(state);
+							}
 						}
 						catch (Exception e)
 						{

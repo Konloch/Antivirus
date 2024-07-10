@@ -2,9 +2,8 @@ package com.konloch.av.downloader.impl.yara;
 
 import com.konloch.AVConstants;
 import com.konloch.Antivirus;
-import com.konloch.av.downloader.DownloadState;
+import com.konloch.av.downloader.DownloadFrequency;
 import com.konloch.av.downloader.Downloader;
-import com.konloch.av.scanning.yara.YaraScanner;
 import com.konloch.av.utils.WindowsUtil;
 import com.konloch.disklib.DiskReader;
 import com.konloch.disklib.DiskWriter;
@@ -33,24 +32,30 @@ public class YaraDownloader implements Downloader
 	public static int yaraRules;
 	
 	@Override
-	public void download(DownloadState state) throws IOException, SQLException
+	public String getName()
 	{
-		if(state == DownloadState.DAILY)
+		return "Yara Dependencies";
+	}
+	
+	@Override
+	public void download(DownloadFrequency state) throws IOException, SQLException
+	{
+		if(state == DownloadFrequency.DAILY)
 			downloadLatest();
 	}
 	
 	@Override
-	public DownloadState getState() throws IOException, SQLException
+	public DownloadFrequency getState() throws IOException, SQLException
 	{
 		if(!AVConstants.ENABLE_YARA_DEPENDENCIES_IMPORT)
-			return DownloadState.NONE;
+			return DownloadFrequency.NONE;
 		
 		//every 7 days check for a new version release
 		if (Antivirus.AV.sqLiteDB.getStringConfig("yara.tools.version").equals("") ||
 				System.currentTimeMillis() - Antivirus.AV.sqLiteDB.getLongConfig("yara.tools.age") >= 1000 * 60 * 60 * 24 * 7)
-			return DownloadState.DAILY;
+			return DownloadFrequency.DAILY;
 		
-		return DownloadState.NONE;
+		return DownloadFrequency.NONE;
 	}
 	
 	private boolean downloadLatest() throws IOException, SQLException

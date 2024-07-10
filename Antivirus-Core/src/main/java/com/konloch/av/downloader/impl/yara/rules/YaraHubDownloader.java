@@ -2,7 +2,7 @@ package com.konloch.av.downloader.impl.yara.rules;
 
 import com.konloch.AVConstants;
 import com.konloch.Antivirus;
-import com.konloch.av.downloader.DownloadState;
+import com.konloch.av.downloader.DownloadFrequency;
 import com.konloch.av.downloader.Downloader;
 
 import java.io.*;
@@ -21,17 +21,23 @@ import java.util.zip.ZipInputStream;
 public class YaraHubDownloader implements Downloader
 {
 	@Override
-	public void download(DownloadState state) throws IOException, SQLException
+	public String getName()
 	{
-		if(state == DownloadState.DAILY)
+		return "Yara Hub (Yara Rules)";
+	}
+	
+	@Override
+	public void download(DownloadFrequency state) throws IOException, SQLException
+	{
+		if(state == DownloadFrequency.DAILY)
 			downloadUpdate();
 	}
 	
 	@Override
-	public DownloadState getState() throws IOException, SQLException
+	public DownloadFrequency getState() throws IOException, SQLException
 	{
 		if(!AVConstants.ENABLE_YARA_DATABASE_IMPORT)
-			return DownloadState.NONE;
+			return DownloadFrequency.NONE;
 		
 		//TODO disabled due to false positives (the errant files can be manually removed by using a blacklist)
 		
@@ -39,7 +45,7 @@ public class YaraHubDownloader implements Downloader
 		//if (System.currentTimeMillis() - Antivirus.AV.sqLiteDB.getLongConfig("yarahub.database.age") >= 1000 * 60 * 60 * 4)
 		//	return DownloadState.DAILY;
 		
-		return DownloadState.NONE;
+		return DownloadFrequency.NONE;
 	}
 	
 	private void downloadUpdate() throws IOException, SQLException

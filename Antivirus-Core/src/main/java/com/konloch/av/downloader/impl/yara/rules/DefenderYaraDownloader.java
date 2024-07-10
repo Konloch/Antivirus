@@ -2,7 +2,7 @@ package com.konloch.av.downloader.impl.yara.rules;
 
 import com.konloch.AVConstants;
 import com.konloch.Antivirus;
-import com.konloch.av.downloader.DownloadState;
+import com.konloch.av.downloader.DownloadFrequency;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -16,17 +16,23 @@ import java.sql.SQLException;
 public class DefenderYaraDownloader extends YaraHubDownloader
 {
 	@Override
-	public void download(DownloadState state) throws IOException, SQLException
+	public String getName()
 	{
-		if(state == DownloadState.DAILY)
+		return "Yara Defender (Yara Rules)";
+	}
+	
+	@Override
+	public void download(DownloadFrequency state) throws IOException, SQLException
+	{
+		if(state == DownloadFrequency.DAILY)
 			downloadUpdate();
 	}
 	
 	@Override
-	public DownloadState getState() throws IOException, SQLException
+	public DownloadFrequency getState() throws IOException, SQLException
 	{
 		if(!AVConstants.ENABLE_YARA_DATABASE_IMPORT)
-			return DownloadState.NONE;
+			return DownloadFrequency.NONE;
 		
 		//TODO disabled due to scan speed
 		
@@ -34,7 +40,7 @@ public class DefenderYaraDownloader extends YaraHubDownloader
 		//if (System.currentTimeMillis() - Antivirus.AV.sqLiteDB.getLongConfig("defender-yara.database.age") >= 1000 * 60 * 60 * 24 * 7)
 		//	return DownloadState.DAILY;
 		
-		return DownloadState.NONE;
+		return DownloadFrequency.NONE;
 	}
 	
 	private void downloadUpdate() throws IOException, SQLException

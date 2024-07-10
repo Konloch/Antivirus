@@ -10,24 +10,42 @@ export default function Scanner() {
   const [scanRemaining, setScanRemaining] = useState("")
   const [currentFile, setCurrentFile] = useState("")
   const [isScanning, setIsScanning] = useState(false)
+  const [currentTitle, setCurrentTitle] = useState("Antivirus+")
+  const [currentStatus, setCurrentStatus] = useState("Loading...")
   const apiKey = (typeof window !== "undefined") ? new URL(window.location.href).searchParams.get('key') : "";
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isScanning) {
-      interval = setInterval(() => {
-        fetch(`/api/scan/status?key=${apiKey}`)
-          .then((response) => response.json())
-          .then((data) => {
-            setScanProgress(data.progress)
-            setScannedFiles(data.scannedFiles)
-            setCurrentFile(data.currentFile)
-            setScanDuration(data.duration)
-            setScanRemaining(data.remaining)
-          })
-      }, 100)
-    }
-    return () => clearInterval(interval)
+      let scanInterval: NodeJS.Timeout;
+      let idleInterval: NodeJS.Timeout;
+
+      if (isScanning) {
+        scanInterval = setInterval(() => {
+          fetch(`/api/scan/status?key=${apiKey}`)
+           .then((response) => response.json())
+           .then((data) => {
+              setScanProgress(data.progress)
+              setScannedFiles(data.scannedFiles)
+              setCurrentFile(data.currentFile)
+              setScanDuration(data.duration)
+              setScanRemaining(data.remaining)
+            })
+        }, 100)
+      } else {
+        idleInterval = setInterval(() => {
+          fetch(`/api/app/status?key=${apiKey}`)
+           .then((response) => response.json())
+           .then((data) =>
+           {
+              setCurrentTitle(data.title);
+              setCurrentStatus(data.status);
+            })
+        }, 1000)
+      }
+
+      return () => {
+        clearInterval(scanInterval)
+        clearInterval(idleInterval)
+      }
   }, [isScanning])
   const handleScan = (type: string) => {
     fetch(`/api/scan/${type}?key=${apiKey}`)
@@ -51,6 +69,8 @@ export default function Scanner() {
     <div className="flex flex-col items-center justify-center h-screen bg-background">
       {!isScanning ? (
         <div className="flex flex-col gap-4">
+          <h2 className="text-center text-2xl font-bold">{currentTitle}</h2>
+          <p className="text-center text-gray-500">{currentStatus}</p>
           <Button onClick={() => handleScan("quick")}>Quick Scan</Button>
           <Button onClick={() => handleScan("full")}>Full Scan</Button>
           <Button onClick={() => handleScan("specific")}>Specific File/Folder Scan</Button>

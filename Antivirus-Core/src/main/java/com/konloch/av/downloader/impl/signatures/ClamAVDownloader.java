@@ -3,7 +3,7 @@ package com.konloch.av.downloader.impl.signatures;
 import com.konloch.AVConstants;
 import com.konloch.Antivirus;
 import com.konloch.av.database.malware.FileSignature;
-import com.konloch.av.downloader.DownloadState;
+import com.konloch.av.downloader.DownloadFrequency;
 import com.konloch.av.downloader.Downloader;
 import com.konloch.av.utils.HashUtils;
 import com.konloch.util.FastStringUtils;
@@ -24,7 +24,13 @@ import java.util.zip.GZIPInputStream;
 public class ClamAVDownloader implements Downloader
 {
 	@Override
-	public void download(DownloadState state) throws IOException, SQLException
+	public String getName()
+	{
+		return "Clam AV (File Signatures)";
+	}
+	
+	@Override
+	public void download(DownloadFrequency state) throws IOException, SQLException
 	{
 		switch(state)
 		{
@@ -39,20 +45,20 @@ public class ClamAVDownloader implements Downloader
 	}
 	
 	@Override
-	public DownloadState getState() throws IOException, SQLException
+	public DownloadFrequency getState() throws IOException, SQLException
 	{
 		if(!AVConstants.ENABLE_SIGNATURE_SCANNING_DATABASES_IMPORT)
-			return DownloadState.NONE;
+			return DownloadFrequency.NONE;
 		
 		if (Antivirus.AV.sqLiteDB.getLongConfig("clamav.database.main.age") == 0)
-			return DownloadState.INITIAL;
+			return DownloadFrequency.INITIAL;
 		
 		//TODO make it every 4 hours
 		// + in order to do this we need to support diffpatches and finish the libfreshclam implementation
 		if(System.currentTimeMillis() - Antivirus.AV.sqLiteDB.getLongConfig("clamav.database.daily.age") >= 1000 * 60 * 60 * 24 * 7)
-			return DownloadState.DAILY;
+			return DownloadFrequency.DAILY;
 		
-		return DownloadState.NONE;
+		return DownloadFrequency.NONE;
 	}
 	
 	private void downloadFullUpdate() throws IOException, SQLException

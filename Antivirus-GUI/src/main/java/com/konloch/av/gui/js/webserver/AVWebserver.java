@@ -2,6 +2,7 @@ package com.konloch.av.gui.js.webserver;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.konloch.av.api.SoftwareStatus;
 import com.konloch.av.gui.js.webserver.http.HTTPdLib;
 
 import java.io.IOException;

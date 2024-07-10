@@ -486,7 +486,12 @@ public class SQLiteDB
 	
 	public void printDatabaseStatistics()
 	{
-		System.out.println("Counted " + NumberFormat.getInstance().format(Antivirus.AV.sqLiteDB.countFileSignatures()) + " malware signatures & " + NumberFormat.getInstance().format(YaraDownloader.yaraRules) + " yara rules.");
+		String signatures = NumberFormat.getInstance().format(Antivirus.AV.sqLiteDB.countFileSignatures());
+		String rules = NumberFormat.getInstance().format(YaraDownloader.yaraRules);
+		
+		System.out.println("Counted " + signatures + " malware signatures & " + rules + " yara rules.");
+		
+		Antivirus.AV.softwareStatus.status = signatures + " File Signatures & " + rules + " Yara Rules";
 	}
 	
 	public void close()

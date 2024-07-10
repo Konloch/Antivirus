@@ -101,5 +101,6 @@ public class AVGUI
 		
 		//print the db stats
 		Antivirus.AV.sqLiteDB.printDatabaseStatistics();
+		
 	}
 }

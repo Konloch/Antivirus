@@ -1,5 +1,6 @@
 package com.konloch;
 
+import com.konloch.av.api.SoftwareStatus;
 import com.konloch.av.database.malware.DetectedSignatureFile;
 import com.konloch.av.database.malware.MalwareScanFile;
 import com.konloch.av.database.sql.SQLiteDB;
@@ -27,6 +28,7 @@ public class Antivirus
 	public final MalwareScanners scanners = new MalwareScanners();
 	public final AVQuarantine quarantine = new AVQuarantine();
 	public final MimicVM mimicVM = new MimicVM();
+	public final SoftwareStatus softwareStatus = new SoftwareStatus();
 	
 	public void startup()
 	{

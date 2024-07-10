@@ -9,6 +9,9 @@ import java.sql.SQLException;
  */
 public interface Downloader
 {
-	void download(DownloadState state) throws IOException, SQLException;
-	DownloadState getState() throws IOException, SQLException;
+	void download(DownloadFrequency state) throws IOException, SQLException;
+	
+	DownloadFrequency getState() throws IOException, SQLException;
+	
+	String getName();
 }
