@@ -3,6 +3,7 @@ package com.konloch.av.scanengine.scantypes;
 import com.konloch.av.jna.AdminCheck;
 import com.konloch.av.scanengine.ScanEngine;
 import com.konloch.process.EasyProcess;
+import com.konloch.util.FastStringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,6 +33,11 @@ public class ScanQuick extends ScanSpecific
 		//TODO move to API
 		try
 		{
+			if(!AdminCheck.isCurrentUserAdmin())
+			{
+				//TODO we're going to be missing some executables, we should recommend the usage of admin checking
+			}
+			
 			EasyProcess process = EasyProcess.from(new ProcessBuilder("wmic", "process", "get", "ExecutablePath,ProcessID"));
 			process.waitFor();
 			
@@ -42,8 +48,18 @@ public class ScanQuick extends ScanSpecific
 					continue;
 				
 				String[] parts = out.split("\\s+");
+				
+				if(parts.length < 2)
+					continue;
+				
 				String path = parts[0];
 				String pid = parts[1];
+				
+				if(path.trim().isEmpty() || pid.trim().isEmpty() || !FastStringUtils.isInteger(pid))
+				{
+					System.out.println("Failed on: " + path + " with " + pid);
+					continue;
+				}
 				
 				processes.add(new ActiveProcess(path, pid));
 			}
