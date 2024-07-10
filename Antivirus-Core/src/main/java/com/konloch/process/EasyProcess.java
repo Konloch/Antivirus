@@ -16,7 +16,7 @@ public class EasyProcess
 	public final ArrayList<String> out = new ArrayList<>();
 	public final ArrayList<String> err = new ArrayList<>();
 	
-	public EasyProcess(Process process)
+	private EasyProcess(Process process)
 	{
 		this.process = process;
 	}
