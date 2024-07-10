@@ -44,6 +44,8 @@ public class ScanSpecific extends Scan
 			{
 				File[] selectedFiles = fileChooser.getSelectedFiles();
 				
+				latestUpdate = "Indexing files to be scanned...";
+				
 				for(File selectedFile : selectedFiles)
 				{
 					if(!selectedFile.exists())
@@ -68,6 +70,8 @@ public class ScanSpecific extends Scan
 		else
 		{
 			AVGUI.GUI.scanEngine.dontPromptForNextScan = false;
+			
+			latestUpdate = "Indexing files to be scanned...";
 			
 			for(File selectedFile : AVGUI.GUI.scanEngine.selectedFilesForNextScan)
 			{
