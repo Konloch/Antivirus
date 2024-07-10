@@ -99,7 +99,7 @@ public class SQLiteDB
 		getBooleanConfig("antivirus.static.file.scanning", true);
 		getBooleanConfig("antivirus.dynamic.file.scanning", true);
 		getBooleanConfig("antivirus.automatic.database.updates", true);
-		getBooleanConfig("antivirus.vm.mimic", true);
+		getBooleanConfig("antivirus.vm.mimic", false);
 		getBooleanConfig("antivirus.realtime.file.protection", true);
 		getBooleanConfig("antivirus.realtime.file.scanning", true);
 		getBooleanConfig("antivirus.realtime.process.scanning", true);
