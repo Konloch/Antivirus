@@ -1,5 +1,6 @@
 package com.konloch.av.mimicvm;
 
+import com.konloch.AVConstants;
 import com.konloch.Antivirus;
 
 import java.io.*;
@@ -59,7 +60,9 @@ public class MimicVM
 				Process process;
 				try
 				{
-					process = new ProcessBuilder(fakeProcessFile.getAbsolutePath()).start();
+					process = new ProcessBuilder(fakeProcessFile.getAbsolutePath())
+							.directory(Antivirus.AV.workingDirectory)
+							.start();
 					processPool.add(process);
 				}
 				catch (IOException e)
