@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Konloch
@@ -15,6 +16,7 @@ public class EasyProcess
 	public final Process process;
 	public final ArrayList<String> out = new ArrayList<>();
 	public final ArrayList<String> err = new ArrayList<>();
+	public AtomicInteger threadsRunning = new AtomicInteger(2);
 	
 	private EasyProcess(Process process)
 	{
@@ -56,12 +58,14 @@ public class EasyProcess
 			BufferedReader outputReader = new BufferedReader(new InputStreamReader(stream));
 			String line;
 			
-			while(process.isAlive())
+			while(true)
 			{
 				try
 				{
 					if ((line = outputReader.readLine()) != null)
 						list.add(line);
+					else
+						break;
 				}
 				catch (IOException e)
 				{
@@ -77,6 +81,8 @@ public class EasyProcess
 					e.printStackTrace();
 				}
 			}
+			
+			threadsRunning.decrementAndGet();
 		});
 		
 		readThread.start();
@@ -84,6 +90,13 @@ public class EasyProcess
 	
 	public int waitFor() throws InterruptedException
 	{
-		return process.waitFor();
+		int returnCode = process.waitFor();
+		
+		while(threadsRunning.get() > 0)
+		{
+			Thread.sleep(100);
+		}
+		
+		return returnCode;
 	}
 }
