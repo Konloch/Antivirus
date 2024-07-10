@@ -187,6 +187,10 @@ public class YaraDownloader implements Downloader
 							bos.write(buffer, 0, len);
 						}
 					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 		}
