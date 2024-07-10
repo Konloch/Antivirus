@@ -27,7 +27,7 @@ public class AVQuarantineGUI extends JFrame
 	
 	public AVQuarantineGUI() throws IOException
 	{
-		setTitle(AVConstants.TITLE + " Quarantine " + AVConstants.VERSION);
+		setTitle(AVConstants.TITLE + " Quarantine " + AVConstants.VERSION + " - @Konloch");
 		setIconImage(ImageIO.read(Objects.requireNonNull(AVTray.class.getResourceAsStream("/res/img/icon.png"))));
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		

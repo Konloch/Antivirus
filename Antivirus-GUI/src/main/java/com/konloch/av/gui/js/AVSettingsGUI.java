@@ -23,7 +23,7 @@ public class AVSettingsGUI extends JFrame
 {
 	public AVSettingsGUI() throws IOException
 	{
-		setTitle(AVConstants.TITLE + " Settings " + AVConstants.VERSION);
+		setTitle(AVConstants.TITLE + " Settings " + AVConstants.VERSION + " - @Konloch");
 		setIconImage(ImageIO.read(Objects.requireNonNull(AVTray.class.getResourceAsStream("/res/img/icon.png"))));
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		

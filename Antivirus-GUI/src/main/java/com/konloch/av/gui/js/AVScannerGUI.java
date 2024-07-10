@@ -31,7 +31,7 @@ public class AVScannerGUI extends JFrame
 	
 	public AVScannerGUI() throws IOException
 	{
-		setTitle(AVConstants.TITLE + " Scanner " + AVConstants.VERSION);
+		setTitle(AVConstants.TITLE + " Scanner " + AVConstants.VERSION + " - @Konloch");
 		setIconImage(ImageIO.read(Objects.requireNonNull(AVTray.class.getResourceAsStream("/res/img/icon.png"))));
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		
