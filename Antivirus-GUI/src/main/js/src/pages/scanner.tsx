@@ -71,9 +71,11 @@ export default function Scanner() {
         <div className="flex flex-col gap-4">
           <h2 className="text-center text-2xl font-bold">{currentTitle}</h2>
           <p className="text-center text-gray-500">{currentStatus}</p>
-          <Button onClick={() => handleScan("quick")}>Quick Scan</Button>
-          <Button onClick={() => handleScan("full")}>Full Scan</Button>
-          <Button onClick={() => handleScan("specific")}>Specific File/Folder Scan</Button>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Button onClick={() => handleScan("quick")}>Quick Scan</Button>
+              <Button onClick={() => handleScan("full")}>Full Scan</Button>
+              <Button onClick={() => handleScan("specific")}>Specific File/Folder Scan</Button>
+          </div>
           <div className="text-center"><i>(Drag & drop any file / folder)</i></div>
         </div>
       ) : (
