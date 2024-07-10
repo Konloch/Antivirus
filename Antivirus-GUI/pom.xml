@@ -112,7 +112,7 @@
 					<transformers>
 						<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 							<manifestEntries>
-								<Main-Class>com.konloch.Antivirus</Main-Class>
+								<Main-Class>com.konloch.av.gui.AVGUI</Main-Class>
 								<Implementation-Version>${project.version}</Implementation-Version>
 								<X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
 								<X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
