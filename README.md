@@ -32,7 +32,7 @@
 ## How To Scan
 + Drag and drop any folder or file you want to scan
 + Full scan will scan all of your drives and files, this requires admin elevated rights for a deep scan but works without it
-+ Quick scan will scan all start-up locations & other well known locations
++ Quick scan will scan all active processes, start-up locations & other well known locations
 + Specific scan will prompt a file selection dialogue - select any file or folder from here
 
 ## How To Remove Detections
