@@ -16,6 +16,8 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.stream.Stream;
 
 /**
  * @author Konloch
@@ -54,7 +56,7 @@ public class ScanSpecific extends Scan
 					
 					scanFiles.add(selectedFile);
 					
-					walk(scanFiles, selectedFile);
+					walk(engine, scanFiles, selectedFile);
 					
 					System.out.println("Selected file or directory: " + selectedFile.getAbsolutePath());
 				}
@@ -81,7 +83,7 @@ public class ScanSpecific extends Scan
 				
 				scanFiles.add(selectedFile);
 				
-				walk(scanFiles, selectedFile);
+				walk(engine, scanFiles, selectedFile);
 			}
 			
 			AVGUI.GUI.scanEngine.selectedFilesForNextScan.clear();
@@ -153,27 +155,31 @@ public class ScanSpecific extends Scan
 		latestUpdate = "Scan Complete - " + detectedFiles.size() + " Infection" + (detectedFiles.size() == 1 ? "" : "s") + " Detected";
 	}
 	
-	public void walk(ArrayList<File> scanFiles, File selectedFile)
+	public void walk(ScanEngine engine, ArrayList<File> scanFiles, File selectedFile)
 	{
 		if(selectedFile.isDirectory())
 		{
 			try
 			{
-				Files.walkFileTree(selectedFile.toPath(), new SimpleFileVisitor<Path>()
+				try (Stream<Path> stream = Files.walk(selectedFile.toPath()))
 				{
-					@Override
-					public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-					{
-						return FileVisitResult.CONTINUE;
-					}
+					Iterator<Path> iterator = stream.iterator();
 					
-					@Override
-					public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+					while (iterator.hasNext())
 					{
-						scanFiles.add(dir.toFile());
-						return FileVisitResult.CONTINUE;
+						Path path = iterator.next();
+						
+						if (engine.getActiveScan() == null) //scan stopped
+							break;
+						
+						if(Files.isDirectory(path))
+							scanFiles.add(path.toFile());
 					}
-				});
+				}
+				catch (Throwable e)
+				{
+					e.printStackTrace();
+				}
 			}
 			catch (Throwable e)
 			{

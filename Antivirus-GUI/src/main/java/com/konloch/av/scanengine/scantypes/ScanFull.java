@@ -1,6 +1,5 @@
 package com.konloch.av.scanengine.scantypes;
 
-import com.konloch.av.scanengine.Scan;
 import com.konloch.av.scanengine.ScanEngine;
 
 import java.io.File;
@@ -22,12 +21,15 @@ public class ScanFull extends ScanSpecific
 		ArrayList<File> scanFiles = new ArrayList<>();
 		for(File root : File.listRoots())
 		{
+			if(engine.getActiveScan() == null) //scan ended early
+				return;
+			
 			if(!root.exists())
 				continue;
 			
 			scanFiles.add(root);
 			
-			walk(scanFiles, root);
+			walk(engine, scanFiles, root);
 		}
 		
 		latestUpdate = "Indexed " + scanFiles.size();
