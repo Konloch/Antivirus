@@ -17,8 +17,8 @@ public class AVWebserver
 	public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	public static boolean FAILED_TO_BIND = true;
 	public static int PORT;
-	public static final String RANDOM_PATH_IDENTIFIER = "/" + generateRandomPath();
-	public static final String RANDOM_KEY = generateRandomPath();
+	public static final String STATIC_CONTENT_KEY = "/" + generateRandomPath();
+	public static final String DYNAMIC_API_KEY = generateRandomPath();
 	
 	public static void bind()
 	{
@@ -31,7 +31,7 @@ public class AVWebserver
 				
 				FAILED_TO_BIND = false;
 				
-				System.out.println("AVWebserver bound on http://localhost:" + webserver.getServer().getPort() + RANDOM_PATH_IDENTIFIER);
+				System.out.println("AVWebserver bound on http://localhost:" + webserver.getServer().getPort() + STATIC_CONTENT_KEY + "?key=" + DYNAMIC_API_KEY);
 				break;
 			}
 			catch (IOException e)

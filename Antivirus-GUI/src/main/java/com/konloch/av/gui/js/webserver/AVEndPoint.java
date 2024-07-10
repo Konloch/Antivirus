@@ -5,7 +5,7 @@ import com.konloch.av.gui.js.webserver.http.request.Request;
 
 import java.nio.charset.StandardCharsets;
 
-import static com.konloch.av.gui.js.webserver.AVWebserver.RANDOM_KEY;
+import static com.konloch.av.gui.js.webserver.AVWebserver.DYNAMIC_API_KEY;
 
 /**
  * @author Konloch
@@ -19,7 +19,7 @@ public abstract class AVEndPoint
 		
 		String key = request.getGet().get("key");
 		
-		if(!RANDOM_KEY.equals(key))
+		if(!DYNAMIC_API_KEY.equals(key))
 		{
 			System.out.println("Response rejected: " + request.getPath()  + " using key " + key);
 			return "".getBytes(StandardCharsets.UTF_8);

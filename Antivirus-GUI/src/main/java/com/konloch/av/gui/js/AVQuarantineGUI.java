@@ -58,7 +58,7 @@ public class AVQuarantineGUI extends JFrame
 	
 	public void reload()
 	{
-		webView.getEngine().load("http://localhost:" + AVWebserver.PORT + AVWebserver.RANDOM_PATH_IDENTIFIER + "/quarantine.html?key=" + AVWebserver.RANDOM_KEY);
+		webView.getEngine().load("http://localhost:" + AVWebserver.PORT + AVWebserver.STATIC_CONTENT_KEY + "/quarantine.html?key=" + AVWebserver.DYNAMIC_API_KEY);
 	}
 	
 	public static void main(String[] args) throws IOException

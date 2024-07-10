@@ -1,7 +1,5 @@
 package com.konloch.av.gui.js.webserver;
 
-import com.konloch.av.gui.AVGUI;
-import com.konloch.av.gui.js.webserver.api.ScanProgress;
 import com.konloch.av.gui.js.webserver.endpoints.QuarantineEndPoint;
 import com.konloch.av.gui.js.webserver.endpoints.scan.*;
 import com.konloch.av.gui.js.webserver.endpoints.settings.SettingsChangeEndPoint;
@@ -52,15 +50,15 @@ public class AVRequestListener implements RequestListener
 		//block all requests that do not start with the random path identifier
 		//   + .css and .js are whitelisted to allow the web-app to work
 		if (!(lowerCasePath.endsWith(".css") || lowerCasePath.endsWith(".js"))
-				&& !path.startsWith(AVWebserver.RANDOM_PATH_IDENTIFIER))
+				&& !path.startsWith(AVWebserver.STATIC_CONTENT_KEY))
 		{
 			request.setReturnCode(404);
 			return "Error 404 file not found".getBytes(StandardCharsets.UTF_8);
 		}
 		
 		//remove the random path
-		if (path.startsWith(AVWebserver.RANDOM_PATH_IDENTIFIER))
-			path = path.substring(AVWebserver.RANDOM_PATH_IDENTIFIER.length());
+		if (path.startsWith(AVWebserver.STATIC_CONTENT_KEY))
+			path = path.substring(AVWebserver.STATIC_CONTENT_KEY.length());
 		
 		//guess content type
 		request.setContentType(guessType(path));

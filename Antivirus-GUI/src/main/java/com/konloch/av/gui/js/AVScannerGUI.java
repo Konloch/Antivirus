@@ -64,7 +64,7 @@ public class AVScannerGUI extends JFrame
 	
 	public void reload()
 	{
-		webView.getEngine().load("http://localhost:" + AVWebserver.PORT + AVWebserver.RANDOM_PATH_IDENTIFIER + "/scanner.html?key=" + AVWebserver.RANDOM_KEY);
+		webView.getEngine().load("http://localhost:" + AVWebserver.PORT + AVWebserver.STATIC_CONTENT_KEY + "/scanner.html?key=" + AVWebserver.DYNAMIC_API_KEY);
 	}
 	
 	private void dragOver(DragEvent e)
