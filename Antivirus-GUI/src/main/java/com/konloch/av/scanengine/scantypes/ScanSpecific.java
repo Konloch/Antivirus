@@ -35,6 +35,7 @@ public class ScanSpecific extends Scan
 		if(!AVGUI.GUI.scanEngine.dontPromptForNextScan)
 		{
 			latestUpdate = "Waiting for user to select file";
+			
 			JFileChooser fileChooser = new JFileChooser();
 			fileChooser.setDialogTitle("Select a file / directory to scan");
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -89,67 +90,70 @@ public class ScanSpecific extends Scan
 		}
 		
 		if(preformScan)
-		{
-			String malwareType;
-			
-			AVGUI.GUI.scanEngine.getLatestScan().totalScans = scanFiles.size();
-			
-			int count = 0;
-			for(File scanFile : scanFiles)
-			{
-				//check for scan cancelling
-				if(AVGUI.GUI.scanEngine.getActiveScan() == null)
-					break;
-				
-				if(!scanFile.exists())
-				{
-					AVGUI.GUI.scanEngine.getLatestScan().finishedScans++;
-					continue;
-				}
-				
-				progress = (int) (((double) count++ / scanFiles.size()) * 100);
-				latestUpdate = "Current File: " + scanFile.getName();
-				
-				if((malwareType = Antivirus.AV.detectAsMalware(scanFile)) != null)
-				{
-					boolean detected = false;
-					
-					//extract file from malware type
-					for(String fileLine : malwareType.split("\\r?\\n"))
-					{
-						if(fileLine.contains(" "))
-						{
-							String[] detectionInfo = FastStringUtils.split(fileLine, " ");
-							File selectedFile = new File(detectionInfo[1]);
-							
-							if(selectedFile.exists())
-							{
-								Antivirus.AV.quarantine.quarantineFile(selectedFile, detectionInfo[0]);
-								detectedFiles.add(new ScannedFile(selectedFile.getName(), selectedFile.getAbsolutePath(), "Detected...", selectedFile));
-								detected = true;
-							}
-						}
-					}
-					
-					System.out.println("Detected: " + malwareType);
-					
-					if(!detected)
-						detectedFiles.add(new ScannedFile(scanFile.getName(), scanFile.getAbsolutePath(), "Detected...", scanFile));
-				}
-				
-				AVGUI.GUI.scanEngine.getLatestScan().finishedScans++;
-			}
-			
-			AVGUI.GUI.scanEngine.getLatestScan().finishedScanAt = System.currentTimeMillis();
-			AVGUI.GUI.scanEngine.getLatestScan().scanFinished = true;
-			progress = 100;
-			latestUpdate = "Scan Complete - " + detectedFiles.size() + " Infection" + (detectedFiles.size() == 1 ? "" : "s") + " Detected";
-		}
+			scan(scanFiles);
 		
 		engine.finished();
 	}
 	
-	private void walk(ArrayList<File> scanFiles, File selectedFile)
+	public void scan(ArrayList<File> scanFiles)
+	{
+		String malwareType;
+		
+		AVGUI.GUI.scanEngine.getLatestScan().totalScans = scanFiles.size();
+		
+		int count = 0;
+		for(File scanFile : scanFiles)
+		{
+			//check for scan cancelling
+			if(AVGUI.GUI.scanEngine.getActiveScan() == null)
+				break;
+			
+			if(!scanFile.exists())
+			{
+				AVGUI.GUI.scanEngine.getLatestScan().finishedScans++;
+				continue;
+			}
+			
+			progress = (int) (((double) count++ / scanFiles.size()) * 100);
+			latestUpdate = "Current File: " + scanFile.getName();
+			
+			if((malwareType = Antivirus.AV.detectAsMalware(scanFile)) != null)
+			{
+				boolean detected = false;
+				
+				//extract file from malware type
+				for(String fileLine : malwareType.split("\\r?\\n"))
+				{
+					if(fileLine.contains(" "))
+					{
+						String[] detectionInfo = FastStringUtils.split(fileLine, " ");
+						File selectedFile = new File(detectionInfo[1]);
+						
+						if(selectedFile.exists())
+						{
+							Antivirus.AV.quarantine.quarantineFile(selectedFile, detectionInfo[0]);
+							detectedFiles.add(new ScannedFile(selectedFile.getName(), selectedFile.getAbsolutePath(), "Detected...", selectedFile));
+							detected = true;
+						}
+					}
+				}
+				
+				System.out.println("Detected: " + malwareType);
+				
+				if(!detected)
+					detectedFiles.add(new ScannedFile(scanFile.getName(), scanFile.getAbsolutePath(), "Detected...", scanFile));
+			}
+			
+			AVGUI.GUI.scanEngine.getLatestScan().finishedScans++;
+		}
+		
+		AVGUI.GUI.scanEngine.getLatestScan().finishedScanAt = System.currentTimeMillis();
+		AVGUI.GUI.scanEngine.getLatestScan().scanFinished = true;
+		progress = 100;
+		latestUpdate = "Scan Complete - " + detectedFiles.size() + " Infection" + (detectedFiles.size() == 1 ? "" : "s") + " Detected";
+	}
+	
+	public void walk(ArrayList<File> scanFiles, File selectedFile)
 	{
 		if(selectedFile.isDirectory())
 		{
@@ -171,7 +175,7 @@ public class ScanSpecific extends Scan
 					}
 				});
 			}
-			catch (IOException e)
+			catch (Throwable e)
 			{
 				e.printStackTrace();
 			}
