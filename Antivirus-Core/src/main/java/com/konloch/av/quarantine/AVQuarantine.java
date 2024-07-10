@@ -1,9 +1,12 @@
 package com.konloch.av.quarantine;
 
+import com.konloch.AVConstants;
 import com.konloch.Antivirus;
 import com.konloch.av.database.malware.MalwareScanFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,12 +68,49 @@ public class AVQuarantine
 		return false;
 	}
 	
+	//TODO this function should be on a background thread so we can continue the deletion attempts over and over until we get a successful delete
+	private void remove(FileQuarantine fileQuarantine) throws IOException
+	{
+		if(AVConstants.QUARANTINE_WONT_REMOVE_UNTIL_APPROVED)
+		{
+			File quarantinedFile = new File(fileQuarantine.path);
+			
+			if(quarantinedFile.exists())
+			{
+				//TODO could look for all active processes, if the path is the same, kill it before we try to delete
+				Files.delete(quarantinedFile.toPath());
+			}
+			else //log the win I guess, probably another AV caught it before we could react
+				System.out.println("Quarantined File: " + quarantinedFile.getAbsolutePath() + " no longer exists");
+		}
+		else
+		{
+			//TODO delete from the quarantine folder
+		}
+	}
+	
 	public boolean removeFile(int id)
 	{
-		//TODO delete from the quarantine folder
-		
 		Antivirus.AV.sqLiteDB.removeFromQuarantine(id);
-		quarantineList.removeIf(fQ -> fQ == null || fQ.id == id);
+		quarantineList.removeIf(fQ ->
+		{
+			boolean match = fQ == null || fQ.id == id;
+			
+			if(match && fQ != null)
+			{
+				try
+				{
+					remove(fQ);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
+			}
+			
+			return match;
+		});
 		
 		return false;
 	}
@@ -81,6 +121,16 @@ public class AVQuarantine
 		{
 			if(fileQuarantine == null)
 				return true;
+			
+			try
+			{
+				remove(fileQuarantine);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+				return false;
+			}
 			
 			Antivirus.AV.sqLiteDB.removeFromQuarantine(fileQuarantine.id);
 			
