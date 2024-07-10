@@ -77,6 +77,7 @@ public class SQLiteDB
 					+ ");");
 			
 			//statement.execute("DROP TABLE quarantine");
+			//statement.execute("DROP TABLE whitelist_hash");
 			
 			statement.execute("CREATE TABLE IF NOT EXISTS quarantine (\n"
 					+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
