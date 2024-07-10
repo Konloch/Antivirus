@@ -23,7 +23,7 @@ export default function Settings() {
       ...prevSettings,
       [setting]: !prevSettings[setting],
     }))
-    fetch(`/api/settings/status?key=${apiKey}`, {
+    fetch(`/api/settings/change?key=${apiKey}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
