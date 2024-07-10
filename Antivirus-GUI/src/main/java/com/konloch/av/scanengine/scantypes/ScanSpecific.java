@@ -1,6 +1,7 @@
 package com.konloch.av.scanengine.scantypes;
 
 import com.konloch.Antivirus;
+import com.konloch.av.database.malware.MalwareScanFile;
 import com.konloch.av.gui.AVGUI;
 import com.konloch.av.gui.js.webserver.api.ScannedFile;
 import com.konloch.av.scanengine.Scan;
@@ -125,21 +126,36 @@ public class ScanSpecific extends Scan
 					if(fileLine.contains(" "))
 					{
 						String[] detectionInfo = FastStringUtils.split(fileLine, " ");
-						File selectedFile = new File(detectionInfo[1]);
+						File detectedFile = new File(detectionInfo[1]);
 						
-						if(selectedFile.exists())
+						if(detectedFile.exists())
 						{
-							Antivirus.AV.quarantine.quarantineFile(selectedFile, detectionInfo[0]);
-							detectedFiles.add(new ScannedFile(selectedFile.getName(), selectedFile.getAbsolutePath(), "Detected...", selectedFile));
-							detected = true;
+							MalwareScanFile detectedScanFile = new MalwareScanFile(detectedFile);
+							
+							//verify the file isn't whitelisted
+							if(!detectedScanFile.isWhitelisted())
+							{
+								System.out.println("Detected: " + malwareType);
+								Antivirus.AV.quarantine.quarantineFile(detectedFile, detectionInfo[0]);
+								detectedFiles.add(new ScannedFile(detectedFile.getName(), detectedFile.getAbsolutePath(), "Detected...", detectedFile));
+								detected = true;
+							}
 						}
 					}
 				}
 				
-				System.out.println("Detected: " + malwareType);
-				
+				//detected as file being scanned directly
 				if(!detected)
-					detectedFiles.add(new ScannedFile(scanFile.getName(), scanFile.getAbsolutePath(), "Detected...", scanFile));
+				{
+					MalwareScanFile detectedScanFile = new MalwareScanFile(scanFile);
+					
+					//verify the file isn't whitelisted
+					if(!detectedScanFile.isWhitelisted())
+					{
+						System.out.println("Detected: " + malwareType);
+						detectedFiles.add(new ScannedFile(scanFile.getName(), scanFile.getAbsolutePath(), "Detected...", scanFile));
+					}
+				}
 			}
 			
 			AVGUI.GUI.scanEngine.getLatestScan().finishedScans++;
