@@ -13,7 +13,7 @@ export default function Quarantine() {
       try {
         const response = await fetch(`/api/quarantine?key=${apiKey}`, {
           method: 'POST',
-          body: `action=getFile`,
+          body: `action=getFiles`,
         });
         const data = await response.json();
         setFiles(data);
