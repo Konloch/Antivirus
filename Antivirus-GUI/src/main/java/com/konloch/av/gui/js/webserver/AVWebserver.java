@@ -44,7 +44,7 @@ public class AVWebserver
 	private static String generateRandomPath()
 	{
 		Random random = new Random();
-		char[] charset = "abcdefhijklmpqrstuvwxyzABCDEFHIJKLMQRSTUVWXYZ0123456789".toCharArray();
+		char[] charset = "abcdefhijklmpqrstuvwxyzABCDEFHIJKLMQRSTUVWXYZ".toCharArray();
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 64; i++)
 			sb.append(charset[random.nextInt(charset.length)]);
