@@ -1,5 +1,6 @@
 /target/
 /.idea/
 /tests/
+log.txt
 
 dependency-reduced-pom.xml
