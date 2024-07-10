@@ -70,6 +70,10 @@ Scanning GUI with Quarantine GUI
 
 Scanning GUI
 
+![Screenshot-9](.github/screen-9.gif "Screenshot-9")
+
+Settings GUI with dynamic scanning toggle
+
 ![Screenshot-5](.github/screen-5.png "Screenshot-5")
 
 Settings GUI
