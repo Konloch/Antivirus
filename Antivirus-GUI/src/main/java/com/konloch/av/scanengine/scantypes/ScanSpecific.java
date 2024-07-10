@@ -167,13 +167,20 @@ public class ScanSpecific extends Scan
 					
 					while (iterator.hasNext())
 					{
-						Path path = iterator.next();
-						
-						if (engine.getActiveScan() == null) //scan stopped
-							break;
-						
-						if(Files.isDirectory(path))
-							scanFiles.add(path.toFile());
+						try
+						{
+							Path path = iterator.next();
+							
+							if (engine.getActiveScan() == null) //scan stopped
+								break;
+							
+							if (Files.isDirectory(path))
+								scanFiles.add(path.toFile());
+						}
+						catch (Throwable e)
+						{
+							e.printStackTrace();
+						}
 					}
 				}
 				catch (Throwable e)
