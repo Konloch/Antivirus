@@ -72,7 +72,7 @@ Scanning GUI
 
 ![Screenshot-9](.github/screen-9.gif "Screenshot-9")
 
-Settings GUI with dynamic scanning toggle
+Settings GUI with toggling the scanning options
 
 ![Screenshot-5](.github/screen-5.png "Screenshot-5")
 
