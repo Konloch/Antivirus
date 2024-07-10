@@ -62,7 +62,7 @@ return (
   <div className="flex flex-col items-center justify-center h-screen bg-background">
     <div className="flex flex-col gap-4">
       {files.length > 0 && (
-        <Button onClick={handleRemoveAll}>Remove All</Button>
+        <Button onClick={handleRemoveAll}>Delete All</Button>
       )}
       <div className="flex flex-col items-start w-full gap-2 max-h-[200px] overflow-auto">
       {files.length > 0 ? (
@@ -73,7 +73,7 @@ return (
               False Positive
             </Button>
             <Button title="This will delete the file forever" variant="outline" onClick={() => handleFileRemove(file['id'])}>
-              Remove Forever
+              Delete Forever
             </Button>
           </div>
         ))
