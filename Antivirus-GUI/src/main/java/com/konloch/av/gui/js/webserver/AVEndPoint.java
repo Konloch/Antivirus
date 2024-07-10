@@ -17,9 +17,8 @@ public abstract class AVEndPoint
 	{
 		Request request = clientBuffer.request;
 		
-		//TODO
-		//if(!request.getPost().get("key").equals(RANDOM_KEY))
-		//	return "".getBytes(StandardCharsets.UTF_8);
+		if(!request.getPost().get("key").equals(RANDOM_KEY))
+			return "".getBytes(StandardCharsets.UTF_8);
 		
 		return process(clientBuffer, request);
 	}

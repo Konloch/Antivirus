@@ -10,11 +10,16 @@ export default function Scanner() {
   const [scanRemaining, setScanRemaining] = useState("")
   const [currentFile, setCurrentFile] = useState("")
   const [isScanning, setIsScanning] = useState(false)
+  const apiKey = (typeof window !== "undefined") ? new URL(window.location.href).searchParams.get('key') : "";
+
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isScanning) {
       interval = setInterval(() => {
-        fetch("/api/scan/status")
+        fetch("/api/scan/status", {
+            method: 'POST',
+            body: `key=${apiKey}`,
+        })
           .then((response) => response.json())
           .then((data) => {
             setScanProgress(data.progress)
@@ -29,11 +34,8 @@ export default function Scanner() {
   }, [isScanning])
   const handleScan = (type: string) => {
   fetch(`/api/scan/${type}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ scanType: type }),
+      method: 'POST',
+      body: `key=${apiKey}`,
     }).then(() => {
       setIsScanning(true)
     })
@@ -41,6 +43,7 @@ export default function Scanner() {
   const handleStopScan = () => {
     fetch("/api/scan/stop", {
       method: "POST",
+      body: `key=${apiKey}`,
     }).then(() => {
       setIsScanning(false)
       setScanType(null)

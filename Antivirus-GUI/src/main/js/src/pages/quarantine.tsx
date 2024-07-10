@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 export default function Quarantine() {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const apiKey = (typeof window !== "undefined") ? new URL(window.location.href).searchParams.get('key') : "";
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -13,7 +13,7 @@ export default function Quarantine() {
       try {
         const response = await fetch('/api/quarantine', {
           method: 'POST',
-            body: 'action=getFiles',
+          body: `action=getFiles&key=${apiKey}`,
         });
         const data = await response.json();
         setFiles(data);
@@ -36,7 +36,7 @@ export default function Quarantine() {
     const handleFileRemove = (id) => {
       fetch('/api/quarantine', {
         method: 'POST',
-        body: `action=removeFile&id=${id}`,
+        body: `action=removeFile&id=${id}&key=${apiKey}`,
       })
       setFiles((prevFiles) => prevFiles.filter((file) => file['id'] !== id))
     }
@@ -44,7 +44,7 @@ export default function Quarantine() {
     const handleReportFalsePositive = (id) => {
       fetch('/api/quarantine', {
         method: 'POST',
-        body: `action=reportFalsePositive&id=${id}`,
+        body: `action=reportFalsePositive&id=${id}&key=${apiKey}`,
       })
       // You can also update the UI to reflect the reported false positive
       // For example, you can add a "Reported" badge next to the file name
@@ -53,7 +53,7 @@ export default function Quarantine() {
     const handleRemoveAll = () => {
       fetch('/api/quarantine', {
         method: 'POST',
-        body: 'action=removeAllFiles',
+        body: `action=removeAllFiles&key=${apiKey}`,
       })
       setFiles([])
     }

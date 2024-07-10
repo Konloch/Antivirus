@@ -4,10 +4,15 @@ import { Label } from "@/components/ui/label"
 
 export default function Settings() {
   const [settings, setSettings] = useState({})
+  const apiKey = (typeof window !== "undefined") ? new URL(window.location.href).searchParams.get('key') : "";
+
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await fetch("/api/settings/status")
+        const response = await fetch("/api/settings/status?key=${apiKey}", {
+          method: 'POST',
+          body: `key=${apiKey}`,
+        });
         const data = await response.json()
         setSettings(data)
       } catch (error) {
@@ -23,10 +28,7 @@ export default function Settings() {
     }))
     fetch("/api/settings/change", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ [setting]: !settings[setting] }),
+      body: `key=${apiKey}&json=` + JSON.stringify({ [setting]: !settings[setting] }),
     })
   }
   return (
