@@ -17,7 +17,7 @@ public class ScanQuickEndPoint extends AVEndPoint
 	public byte[] process(ClientBuffer clientBuffer, Request request)
 	{
 		AVGUI.GUI.scanEngine.scanGUIStage = 1;
-		//TODO quick scan
+		AVGUI.GUI.scanEngine.scanQuick();
 		return "".getBytes(StandardCharsets.UTF_8);
 	}
 }

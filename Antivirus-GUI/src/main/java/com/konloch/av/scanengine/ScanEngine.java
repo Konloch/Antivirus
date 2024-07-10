@@ -1,6 +1,8 @@
 package com.konloch.av.scanengine;
 
 import com.konloch.Antivirus;
+import com.konloch.av.scanengine.scantypes.ScanFull;
+import com.konloch.av.scanengine.scantypes.ScanQuick;
 import com.konloch.av.scanengine.scantypes.ScanSpecific;
 
 import java.io.File;
@@ -45,6 +47,22 @@ public class ScanEngine
 	public void init()
 	{
 		scanThread.start();
+	}
+	
+	public void scanQuick()
+	{
+		if(activeScan != null)
+			return;
+		
+		latestScan = activeScan = new ScanQuick();
+	}
+	
+	public void scanFull()
+	{
+		if(activeScan != null)
+			return;
+		
+		latestScan = activeScan = new ScanFull();
 	}
 	
 	public void scanSpecific()

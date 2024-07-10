@@ -17,7 +17,7 @@ public class ScanFullEndPoint extends AVEndPoint
 	public byte[] process(ClientBuffer clientBuffer, Request request)
 	{
 		AVGUI.GUI.scanEngine.scanGUIStage = 1;
-		//TODO full computer scan
+		AVGUI.GUI.scanEngine.scanFull();
 		return "".getBytes(StandardCharsets.UTF_8);
 	}
 }
