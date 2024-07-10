@@ -3,7 +3,7 @@
 
 	<groupId>com.konloch</groupId>
 	<artifactId>Antivirus-GUI</artifactId>
-	<version>0.0.1</version>
+	<version>0.1.0</version>
 
 	<name>Antivirus-GUI</name>
 	<description>Konloch Antivirus-GUI</description>
