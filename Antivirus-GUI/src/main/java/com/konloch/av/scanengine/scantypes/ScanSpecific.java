@@ -125,7 +125,7 @@ public class ScanSpecific extends Scan
 				{
 					if(fileLine.contains(" "))
 					{
-						String[] detectionInfo = FastStringUtils.split(fileLine, " ");
+						String[] detectionInfo = FastStringUtils.split(fileLine, " ", 2);
 						File detectedFile = new File(detectionInfo[1]);
 						
 						if(detectedFile.exists())
